@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "tw-gov-overseas-trip",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["agency", "traveler", "trip"],
+  "properties": {
+    "agency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["full_name"],
+      "properties": {
+        "full_name": {"type": "string", "minLength": 1, "description": "機關全銜"},
+        "unit": {"type": "string", "description": "單位（附件一封面欄）"},
+        "short_name": {"type": "string", "description": "機關簡稱"},
+        "head_title": {"type": "string", "description": "機關首長職稱（審核表簽章）"}
+      }
+    },
+    "traveler": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "title": {"type": "string", "description": "職稱"},
+        "rank": {"type": "string", "description": "職等（艙等判定供承辦參考，計算器不自動判）"}
+      }
+    },
+    "trip": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["purpose_category", "country", "start_date", "end_date"],
+      "properties": {
+        "purpose_category": {"type": "string",
+          "enum": ["考察", "進修", "研究", "實習", "視察", "訪問", "開會", "談判", "其他"],
+          "description": "附件一出國類別"},
+        "country": {"type": "string"},
+        "city": {"type": "string", "description": "對應日支表城市；未列則用該國『其他』"},
+        "start_date": {"type": "string", "format": "date"},
+        "end_date": {"type": "string", "format": "date"},
+        "organization": {"type": "string", "description": "境外主辦單位（與 agency 分離）"}
+      }
+    },
+    "summary": {"type": "string", "description": "附件一摘要，renderer 檢查 200-300 中文字"}
+  }
+}

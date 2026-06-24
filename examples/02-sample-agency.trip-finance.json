@@ -1,0 +1,57 @@
+{
+  "agency": {
+    "full_name": "○○部",
+    "unit": "綜合規劃司",
+    "short_name": "本部",
+    "head_title": "部長"
+  },
+  "per_diem_inputs": {
+    "segments": [
+      {
+        "date": "2027-09-01",
+        "per_diem_base": 165,
+        "lodging_city": "曼谷",
+        "country": "泰國"
+      },
+      {
+        "date": "2027-09-02",
+        "per_diem_base": 165,
+        "lodging_city": "曼谷",
+        "country": "泰國",
+        "host_provided": "board_only"
+      },
+      {
+        "date": "2027-09-03",
+        "per_diem_base": 165,
+        "lodging_city": "曼谷",
+        "country": "泰國"
+      },
+      {
+        "date": "2027-09-04",
+        "per_diem_base": 165,
+        "lodging_city": "曼谷",
+        "country": "泰國"
+      },
+      {
+        "date": "2027-09-05",
+        "per_diem_base": 165,
+        "lodging_city": "曼谷",
+        "country": "泰國",
+        "is_return_day": true
+      }
+    ],
+    "approved_days": 5,
+    "manual_items": [
+      {
+        "label": "經濟艙機票（台北—曼谷往返）",
+        "amount_usd": 420,
+        "note": "依貴機關覆核"
+      }
+    ]
+  },
+  "signatures": [
+    {"role": "出國人", "name": ""},
+    {"role": "單位主管", "name": ""},
+    {"role": "機關首長", "name": ""}
+  ]
+}

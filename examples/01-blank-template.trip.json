@@ -1,0 +1,40 @@
+{
+  "_comment": "空白範本：將每個欄位的空字串替換為實際值，刪除所有 _comment 欄位後再驗證。",
+  "agency": {
+    "_comment": "機關資料",
+    "full_name": "",
+    "_comment_full_name": "必填：機關全銜，例如「○○部」",
+    "unit": "",
+    "_comment_unit": "選填：承辦單位，例如「綜合規劃司第二科」",
+    "short_name": "",
+    "_comment_short_name": "選填：機關簡稱，例如「本部」",
+    "head_title": "",
+    "_comment_head_title": "選填：機關首長職稱，例如「部長」"
+  },
+  "traveler": {
+    "_comment": "出國人員資料",
+    "name": "",
+    "_comment_name": "必填：姓名，例如「王示範」",
+    "title": "",
+    "_comment_title": "選填：職稱，例如「科員」",
+    "rank": "",
+    "_comment_rank": "選填：職等（供承辦人工判斷艙等），例如「薦任第七職等」"
+  },
+  "trip": {
+    "_comment": "出國行程資料",
+    "purpose_category": "",
+    "_comment_purpose_category": "必填：附件一類別，限用以下值：考察、進修、研究、實習、視察、訪問、開會、談判、其他",
+    "country": "",
+    "_comment_country": "必填：出訪國家，例如「泰國」",
+    "city": "",
+    "_comment_city": "選填：對應日支表城市，未列入者填該國『其他』",
+    "start_date": "",
+    "_comment_start_date": "必填：出發日期（ISO 8601），例如「2027-09-01」",
+    "end_date": "",
+    "_comment_end_date": "必填：返國日期（ISO 8601），例如「2027-09-05」",
+    "organization": "",
+    "_comment_organization": "選填：境外主辦單位全名"
+  },
+  "summary": "",
+  "_comment_summary": "選填：附件一摘要，renderer 將檢查字數（200-300 中文字）"
+}

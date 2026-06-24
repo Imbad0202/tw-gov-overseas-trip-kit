@@ -1,0 +1,21 @@
+# 工具 cache 目錄（不入 repo）
+.impeccable/
+
+# 機敏輸入：使用者帶入的真實機關資料不入庫
+data/
+*.trip.json
+*.trip-finance.json
+*.local*
+*.public/
+
+# 但放行 examples 自己的合成範本（否則自我矛盾）
+!examples/
+!examples/*.trip.json
+!examples/*.trip-finance.json
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.venv/

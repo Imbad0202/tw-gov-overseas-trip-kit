@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "tw-gov-overseas-trip-finance",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["agency", "per_diem_inputs"],
+  "properties": {
+    "agency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["full_name"],
+      "properties": {
+        "full_name": {"type": "string", "minLength": 1},
+        "unit": {"type": "string"},
+        "short_name": {"type": "string"},
+        "head_title": {"type": "string"}
+      }
+    },
+    "per_diem_inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["segments"],
+      "properties": {
+        "segments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["date", "per_diem_base"],
+            "properties": {
+              "date": {"type": "string", "format": "date"},
+              "per_diem_base": {"type": "number", "minimum": 0,
+                "description": "當地當日日支基準額（美元）。使用者/Claude 查**當年度**官方日支表填入（工具不內建年年變動的表）。填值原則：跨多地區用『當日留宿地』數額(R4)；未列城市用該國『其他』、未列國家比照最近國(R5)；季節城市選『當日』所屬區間數額。詳見 SKILL.md"},
+              "lodging_city": {"type": "string",
+                "description": "當日留宿城市（記錄用，顯示於明細；數額看 per_diem_base）"},
+              "country": {"type": "string", "description": "記錄用"},
+              "is_return_day": {"type": "boolean", "default": false,
+                "description": "**僅**返國當日 → 30%（第九點末項）。機上歇夜不是返國日，勿用此旗標（B-6）"},
+              "host_provided": {"type": "string",
+                "enum": ["none", "board_and_lodging", "board_only", "lodging_only"],
+                "default": "none",
+                "description": "主辦供應（要點第九點1項）"},
+              "meals_not_provided": {"type": "array",
+                "items": {"type": "string", "enum": ["breakfast", "lunch", "dinner"]},
+                "uniqueItems": true,
+                "description": "未供餐別（要點第九點3項：早4/中8/晚8%）。同一餐別不可重複，重複將導致多算金額。"},
+              "cash_allowance_usd": {"type": "number", "minimum": 0, "default": 0,
+                "description": "P1-1：主辦另給現金津貼，零用費補足至10%扣此額（第九點1項）"},
+              "day_index_same_place": {"type": "integer", "default": 1,
+                "description": "P1-2：同一地點駐留第幾日（遞減用，第十一點）。**未填預設第1日（不遞減）**。長駐案件（逾30日）承辦須逐日填入正確日序，否則遞減將不生效，計算結果偏高。"},
+              "reduction_exempt": {"type": "boolean", "default": false,
+                "description": "P1-2：國際會議/紅色警示/籌設使領館 → 不適用遞減（第十一點除外）"},
+              "approved_extension": {"type": "boolean", "default": false,
+                "description": "P1-5/B-5：延返經核准（患病/意外/不可歸責事由），超出核准日數仍可報（第三、十二點）"}
+            }
+          }
+        },
+        "approved_days": {"type": "integer",
+          "description": "P1-5：核准出差日數；超出之 segment 不得報支（第三點），除非 approved_extension 為 true"},
+        "manual_items": {
+          "type": "array",
+          "description": "B 類人工判斷金額（艙等/覈實住宿/禮品雜費/匯率調整）；計算器原樣納入總額",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["label", "amount_usd"],
+            "properties": {
+              "label": {"type": "string"},
+              "amount_usd": {"type": "number"},
+              "note": {"type": "string", "description": "依貴機關覆核之依據"}
+            }
+          }
+        }
+      }
+    },
+    "signatures": {
+      "type": "array",
+      "description": "動態簽章欄（各機關編制不同，不寫死）",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role"],
+        "properties": {
+          "role": {"type": "string"},
+          "name": {"type": "string"}
+        }
+      }
+    }
+  }
+}

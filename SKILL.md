@@ -1,0 +1,270 @@
+# SKILL.md — tw-gov-overseas-trip-kit 進階用法
+
+> **版本鎖定提醒**：本工具的計算規則對齊「國外出差旅費報支要點」114.05.13 修正版。
+> 日支數額表（生活費日支數額表）**不內建於工具**，須由使用者帶入當年度官方版本。
+> 詳見本文〈日支基準額填值流程〉一節及 [DISCLAIMER.md](DISCLAIMER.md)。
+
+---
+
+## 目錄
+
+1. [四個輸出文件用途](#四個輸出文件用途)
+2. [輸入 schema 路徑](#輸入-schema-路徑)
+3. [啟動流程：帶入你機關的範例](#啟動流程帶入你機關的範例)
+4. [日支基準額填值流程（`per_diem_base`）](#日支基準額填值流程per_diem_base)
+5. [B 類人工值填入](#b-類人工值填入)
+6. [計算器 scope 邊界](#計算器-scope-邊界)
+7. [docx 轉 PDF 指引](#docx-轉-pdf-指引)
+8. [法規版本鎖定提醒與免責聲明](#法規版本鎖定提醒與免責聲明)
+
+---
+
+## 四個輸出文件用途
+
+| 輸出文件 | 產生函式 | 用途 |
+|---|---|---|
+| 出國報告書（`.docx`） | `render.render_docx.render_report_docx(data, out_path)` | 對齊行政院出國報告綜合處理要點**附件一**格式，含封面、摘要、壹目的/貳過程/參心得及建議章節與頁碼。為可編輯 Word 文件，送核前於 Word 補填本文內容。 |
+| 審核表（`.docx`） | `render.render_docx.render_review_table_docx(data, out_path)` | 對齊**附件二**審核表，10 項勾選欄（出國人員自我檢核 + 計畫主辦機關審核）+ 三段簽章列。 |
+| 經費規劃表（`.xlsx`） | `render.render_finance_xlsx.render_finance_xlsx(data, out_path)` | 逐日日支明細 + B 類人工項目 + 尾數進位整數總計（美元）+ 動態簽章列。 |
+| 行前須知（`.html`） | `render.render_html.render_html(data, out_path)` | 機關參數化行前提示頁，可直接用瀏覽器開啟或列印。 |
+
+報告書 docx 與審核表 docx 讀取 `schema/trip.schema.json` 格式的資料；
+經費規劃表讀取 `schema/trip-finance.schema.json` 格式的資料；
+行前須知 HTML 讀取 `schema/trip.schema.json` 格式的資料。
+
+---
+
+## 輸入 schema 路徑
+
+```
+schema/trip.schema.json          ← 報告書 / 行前須知 / 審核表
+schema/trip-finance.schema.json  ← 經費規劃表
+```
+
+兩者均採 JSON Schema Draft 2020-12，`additionalProperties: false`（多出欄位即 fail）。
+
+必填欄位（`trip.schema.json`）：`agency.full_name`、`traveler.name`、`trip.purpose_category`、`trip.country`、`trip.start_date`、`trip.end_date`。
+
+必填欄位（`trip-finance.schema.json`）：`agency.full_name`、`per_diem_inputs.segments`（每筆需有 `date` 和 `per_diem_base`）。
+
+**`summary` 欄位契約**：`summary` 在 schema 中並非 `required`（html／xlsx／審核表不需要），但**呼叫 `render_report_docx`（出國報告書）時為必填且格式受強制驗證**：須含 200–300 個中文字，且不含佔位符（`○○`、`TODO`、`待填`、`XXX`、`範例`）。不合格即 raise `SummaryError` 並中止，不產出 docx。產出報告書前請確認 `trip.json` 的 `summary` 欄位已填入 200–300 字的正式摘要。其餘 render 函式（html／xlsx／審核表）不觸發此檢核。
+
+---
+
+## 啟動流程：帶入你機關的範例
+
+工具不附含任何真實機關資料。啟動時請依以下步驟帶入貴機關資料：
+
+**步驟一：複製合成範例作為起點**
+
+```bash
+cp examples/02-sample-agency.trip.json        my-agency.trip.json
+cp examples/02-sample-agency.trip-finance.json my-agency.trip-finance.json
+```
+
+**步驟二：替換機關欄位**
+
+開啟 `my-agency.trip.json`，將 `agency` 欄位的 `"○○部"` 改為貴機關全銜，`unit`、`head_title` 填實際值。`traveler` 填出差人員職稱與姓名。
+
+```json
+{
+  "agency": {
+    "full_name": "貴機關全銜",
+    "unit": "業務單位名稱",
+    "head_title": "機關首長職稱"
+  },
+  "traveler": {
+    "name": "出差人姓名",
+    "title": "職稱",
+    "rank": "職等（艙等判定供承辦參考）"
+  },
+  "trip": { "..." : "..." }
+}
+```
+
+**步驟三：填 `per_diem_base`**
+
+每個 `segment` 的 `per_diem_base` 填當年度官方日支基準額（美元）。填值方式詳見下一節。
+
+**步驟四：執行產生**
+
+```python
+# 請在專案根目錄（tw-gov-overseas-trip-kit/）執行
+import json, pathlib
+from jsonschema import validate, Draft202012Validator
+from calc.per_diem import compute_trip_per_diem
+from render.render_html import render_html
+from render.render_docx import render_report_docx, render_review_table_docx
+from render.render_finance_xlsx import render_finance_xlsx
+
+trip = json.loads(pathlib.Path("my-agency.trip.json").read_text(encoding="utf-8"))
+fin  = json.loads(pathlib.Path("my-agency.trip-finance.json").read_text(encoding="utf-8"))
+
+render_html(trip, "pre_trip.html")
+render_report_docx(trip, "report.docx")
+render_review_table_docx(trip, "review_table.docx")
+render_finance_xlsx(fin, "finance.xlsx")
+```
+
+產出後，`report.docx` 在 Word 補填壹目的/貳過程/參心得本文，再轉 PDF 送核。
+
+---
+
+## 日支基準額填值流程（`per_diem_base`）
+
+### 核心原則
+
+工具**不內建**日支數額表。原因：數額表每年更新，若內建則版本過時即產生系統性錯誤，使用者無從察覺。因此每個 `segment` 的 `per_diem_base` 須由使用者（或 Claude Code 執行時）查**當年度**官方表填入。
+
+### 取得方式 A：承辦手動查填
+
+前往主計總處法規查詢系統，查詢現行「生活費日支數額表」（法規代號 FL028084）：
+
+```
+https://law.dgbas.gov.tw/lawsingle.aspx?lid=FL028084
+```
+
+確認版本年度（生效日期）與出差日期相符後，按城市/國家查對應數額填入每筆 `segment.per_diem_base`。
+
+### 取得方式 B：請 Claude Code 執行時 WebFetch 代填
+
+在 Claude Code session 中要求：
+
+```
+請 WebFetch 主計總處現行生活費日支數額表（FL028084），
+幫我找出 [城市名] 的 [年度] 數額，填入 per_diem_base。
+```
+
+Claude Code 會嘗試取得當年度數額，填入後請確認：
+
+1. **版本年度**：Claude 取得的是哪一版（生效日）？是否涵蓋出差日期？
+2. **核銷責任**：Claude 代填的數額供起草參考，使用者**自負核銷責任**，送核前需對照原始法規頁面再確認。
+
+### 填值原則（R4/R5）
+
+這些是法規規定的填值判斷準則，工具不自動實作（靠填值者遵循）：
+
+| 情境 | 填值方式 |
+|---|---|
+| 同日跨多地區 | 填**當日留宿地**之數額（報支要點 R4） |
+| 城市未列於數額表 | 填該國「其他」欄數額（R5） |
+| 國家未列於數額表 | 填地理或政治上最近國數額（R5） |
+| 季節性城市（分高/低峰區間） | 填出差**當日**所屬區間之數額 |
+
+### 欄位補充說明
+
+- `lodging_city`：記錄留宿城市，顯示於明細表，不影響計算。
+- `per_diem_base`：計算基礎，單位美元，影響所有折扣/遞減計算。
+
+---
+
+## B 類人工值填入
+
+計算器自動處理「A 類」（日支費本體：住宿 70%/膳食 20%/零用 10%、返國當日 30%、長期遞減、核准日數截斷）。以下項目屬「B 類」，計算器**不自動判定**，由承辦人工計算後填入 `manual_items`：
+
+| 項目 | 說明 |
+|---|---|
+| 機票（艙等） | 艙等依職等判定（要點另規，工具不判）。機票金額由承辦填實際票價或上限額。 |
+| 覈實住宿費 | 住宿費覈實報支情形（適用特定條件）由承辦填實際金額。 |
+| 禮品及雜費 | 依機關規定，由承辦填許可金額。 |
+| 匯率調整 | 若以新台幣核銷，匯率換算由承辦依財政部公告匯率計算後填入。 |
+
+填法：
+
+```json
+{
+  "per_diem_inputs": {
+    "manual_items": [
+      {
+        "label": "經濟艙機票（台北—目的地往返）",
+        "amount_usd": 420,
+        "note": "依貴機關覆核之依據"
+      },
+      {
+        "label": "禮品費",
+        "amount_usd": 50,
+        "note": "依機關規定核可金額"
+      }
+    ]
+  }
+}
+```
+
+`manual_items` 的 `amount_usd` 原樣累加進 `grand_total_usd`，不另行公式處理。
+
+---
+
+## 計算器 scope 邊界
+
+以下情形**不在計算器自動處理範圍**，需承辦人工判斷：
+
+**第十點 — 駐外人員**
+
+本工具適用一般短期出差人員。駐外人員（常駐境外機構人員）依要點第十點另有規定，本工具不涵蓋，不得直接套用。
+
+**第十八點 — 受刑期限返國**
+
+因受刑期限提前返國之費用計算涉及個案核定，本工具不自動處理，由承辦依第十八點規定另行計算。
+
+**第二十三點 — 跨修法分段**
+
+出差期間橫跨要點修正前後（數額表版本更替），計算器不自動分段套用不同版本數額，由承辦手動分段計算後分別填入各 `segment.per_diem_base`，或以 `manual_items` 補差額。
+
+**機上/交通工具歇夜（B-6）**
+
+搭乘飛機或交通工具之夜間行程，不適用 `is_return_day=true`（返國當日 30%）。機上歇夜應視為「供宿不供膳」，將該日 `host_provided` 設為 `"lodging_only"`（膳食 20% + 零用補足）。兩種旗標意義不同，不可混用。
+
+**P1-2 例外（長期遞減豁免）**
+
+國際會議/談判、外交部紅色警示地區、籌設使領館代表處辦事處等情形，可設 `reduction_exempt: true` 關閉遞減，但**是否符合豁免條件**由承辦人工判定，工具不驗證原因。
+
+---
+
+## docx 轉 PDF 指引
+
+行政院出國報告要點要求送交 ODF 或 PDF 格式。本工具產出 `.docx` 為中間格式（Word 可編輯，補填本文後轉出）。
+
+**方式一：Word / LibreOffice 手動轉換**
+
+在 Microsoft Word 或 LibreOffice Writer 開啟 `.docx` 後：
+
+- Windows/macOS Word：`檔案 → 匯出 → 建立 PDF/XPS` 或 `cmd+P → 儲存成 PDF`
+- macOS Word：`cmd+P → PDF → 儲存成 PDF`
+
+**方式二：LibreOffice 命令列轉換（自動化腳本適用）**
+
+```bash
+libreoffice --headless --convert-to pdf report.docx
+libreoffice --headless --convert-to pdf review_table.docx
+```
+
+需先安裝 LibreOffice（`brew install --cask libreoffice` 或官網下載）。轉出的 PDF 與 `.docx` 同目錄。
+
+**注意**：PDF 送核後，原 `.docx` 建議留存備查，勿刪除（若補正需重新產 PDF）。
+
+---
+
+## 法規版本鎖定提醒與免責聲明
+
+### 法規版本
+
+| 法規 | 本工具對齊版本 |
+|---|---|
+| 國外出差旅費報支要點 | 114.05.13 修正（計算規則） |
+| 行政院出國報告綜合處理要點 | 107.06.20 附件一/二格式 |
+| 生活費日支數額表 | **不內建**，由使用者帶入當年度版本 |
+
+使用前請確認貴機關出差日期適用的法規版本。若報支要點已再修正，本工具尚未跟進，計算結果可能與現行規定不符。
+
+### 數額表自負責任
+
+無論以何種方式取得 `per_diem_base`（手動查填或請 Claude Code WebFetch 代填），**使用者自負確認責任**。Claude Code 取得之數額可能因頁面更新、取值解讀等原因產生誤差，送核前應對照主計總處法規系統原始頁面核實。
+
+### 免責聲明全文
+
+詳見 [DISCLAIMER.md](DISCLAIMER.md)：
+
+1. **正確性**：本工具僅協助產生符合格式之文件範本，使用者須對所產出文件之正確性及內容自負其責；送核前應依貴機關規定完成審核。
+2. **AI 基本法**：使用本工具應遵守《人工智慧基本法》（中華民國 114 年 12 月 23 日立法院三讀通過）。
+3. **公務 AI 規範**：公務人員使用應遵守《行政院及所屬機關（構）使用生成式 AI 參考指引》（112 年 10 月 3 日函頒）及所屬機關自訂規範。
+4. **個資法**：使用者應遵守《個人資料保護法》，切勿將機敏個資或未經同意之他人資料輸入至公開之 AI 模型。
