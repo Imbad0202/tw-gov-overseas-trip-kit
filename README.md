@@ -2,6 +2,7 @@
 
 [![Version](https://img.shields.io/badge/version-v1.1.0-blue)](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Sponsor](https://img.shields.io/badge/sponsor-Buy%20Me%20a%20Coffee-orange?logo=buy-me-a-coffee)](https://buymeacoffee.com/crucify020v)
 
 台灣公務機關出國報告文件產生工具，對齊**行政院出國報告綜合處理要點附件一／二**格式，並援引**國外出差旅費報支要點**（114.05.13 修正）計算規則。
 
@@ -108,3 +109,18 @@ render_finance_xlsx(fin, "finance.xlsx")
 ## 授權
 
 MIT License — 詳見 [LICENSE](LICENSE)
+
+---
+
+## 支持這個專案
+
+如果這個工具對你有幫助：
+
+- 按個 [Star](https://github.com/Imbad0202/tw-gov-overseas-trip-kit) 讓更多人看到
+- 分享給承辦出國案件的同仁、或任何需要產出出國報告的人
+- [Buy Me a Coffee](https://buymeacoffee.com/crucify020v) 支持開發者持續更新
+- 發現問題或有建議？歡迎開 [Issue](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/issues)
+
+## 作者
+
+**Cheng-I Wu** — [GitHub](https://github.com/Imbad0202) | [Buy Me a Coffee](https://buymeacoffee.com/crucify020v)

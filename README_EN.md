@@ -2,6 +2,7 @@
 
 [![Version](https://img.shields.io/badge/version-v1.1.0-blue)](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Sponsor](https://img.shields.io/badge/sponsor-Buy%20Me%20a%20Coffee-orange?logo=buy-me-a-coffee)](https://buymeacoffee.com/crucify020v)
 
 Document generation toolkit for Taiwan government overseas trip reports, aligned with the **Executive Yuan Overseas Trip Report Processing Guidelines (Appendix I/II)** format, and referencing the **Overseas Travel Expense Reimbursement Rules** (amended 2025-05-13).
 
@@ -108,3 +109,18 @@ Provenance: [PROVENANCE.md](PROVENANCE.md)
 ## License
 
 MIT License — see [LICENSE](LICENSE)
+
+---
+
+## Support This Project
+
+If this tool helped you:
+
+- Hit [Star](https://github.com/Imbad0202/tw-gov-overseas-trip-kit) so more people can find it
+- Share with colleagues who handle overseas trip cases, or anyone who needs to produce trip reports
+- [Buy Me a Coffee](https://buymeacoffee.com/crucify020v) to support ongoing development
+- Found a bug or have a suggestion? Open an [Issue](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/issues)
+
+## Author
+
+**Cheng-I Wu** — [GitHub](https://github.com/Imbad0202) | [Buy Me a Coffee](https://buymeacoffee.com/crucify020v)
