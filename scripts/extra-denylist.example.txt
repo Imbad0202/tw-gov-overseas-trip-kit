@@ -1,0 +1,21 @@
+# extra-denylist 範例 — TWGOK_EXTRA_DENYLIST 指向的本機機敏詞清單格式
+#
+# 用途：維護者若想在轉 public 前掃自己的專屬機敏詞（特定機關名、人名、
+#       會議地點、內部系統名等），複製本檔到 repo 外（例如 ~/.config/），
+#       填入實際詞，再設環境變數：
+#
+#   export TWGOK_EXTRA_DENYLIST=~/.config/twgok-denylist.txt
+#   bash scripts/check_no_pii.sh
+#   bash scripts/check_metadata.sh
+#
+# 格式：每行一個 grep -E regex；空行與 # 開頭的註解行會被忽略。
+#
+# 重要：實際填好的清單檔「不可」提交進本 public repo
+#       （個人 deny-list 不該強加給 contributor，且清單本身會洩漏防護對象）。
+#       本範例檔僅示範格式，不含任何真實機敏詞。
+#
+# ── 範例佔位（請替換成你自己的詞）──
+<your-organization-name>
+<your-organization-abbreviation>
+<internal-system-name>
+<conference-or-city-names-you-attended>

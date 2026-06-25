@@ -17,7 +17,8 @@ def _render(tmp_path, data, fname="pre_trip.html"):
 def test_html_parametrized(tmp_path):
     html = _render(tmp_path, DATA)
     assert "○○部" in html and "日本" in html
-    assert "HEEACT" not in html and "heeact" not in html   # 零 HEEACT
+    # 「不夾帶寫死機構」由 test_no_hardcoded_agency 正面驗證（換機關名→輸出即換），
+    # 不在此黑名單特定機構名（public repo 不寫機構字眼）。
 
 
 def test_no_hardcoded_agency(tmp_path):

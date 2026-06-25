@@ -1,4 +1,4 @@
-"""行前手冊 HTML renderer（通用、機關參數化、零 HEEACT 元素）。
+"""行前手冊 HTML renderer（通用、機關參數化、無特定機關設計）。
 
 佔位符注入機制：
   template 含兩個佔位符字串：

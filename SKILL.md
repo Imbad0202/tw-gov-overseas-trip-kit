@@ -126,7 +126,7 @@ cp examples/02-sample-agency.trip-finance.json my-agency.trip-finance.json
 ```python
 # 請在專案根目錄（tw-gov-overseas-trip-kit/）執行
 import json, pathlib
-from jsonschema import validate, Draft202012Validator
+from jsonschema import Draft202012Validator, FormatChecker
 from calc.per_diem import compute_trip_per_diem
 from render.render_html import render_html
 from render.render_docx import render_report_docx, render_review_table_docx
@@ -134,6 +134,11 @@ from render.render_finance_xlsx import render_finance_xlsx
 
 trip = json.loads(pathlib.Path("my-agency.trip.json").read_text(encoding="utf-8"))
 fin  = json.loads(pathlib.Path("my-agency.trip-finance.json").read_text(encoding="utf-8"))
+
+# 驗證輸入：務必帶 FormatChecker，否則 schema 的 "format": "date" 不會被檢查，
+# 非法日期字串（如 2027-13-99）會被誤放（jsonschema 預設不啟用 format 檢查）。
+schema = json.loads(pathlib.Path("schema/trip.schema.json").read_text(encoding="utf-8"))
+Draft202012Validator(schema, format_checker=FormatChecker()).validate(trip)
 
 render_html(trip, "pre_trip.html")
 render_report_docx(trip, "report.docx")

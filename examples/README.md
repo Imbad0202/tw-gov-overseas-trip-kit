@@ -46,10 +46,11 @@ check-jsonschema --schemafile schema/trip.schema.json my-trip.json
 
 ```python
 import json, pathlib
-from jsonschema import validate, Draft7Validator
+from jsonschema import Draft202012Validator, FormatChecker
 schema = json.loads(pathlib.Path("schema/trip.schema.json").read_text())
 data   = json.loads(pathlib.Path("my-trip.json").read_text())
-validate(instance=data, schema=schema)
+# 帶 FormatChecker 才會檢查 "format": "date"（否則非法日期字串會被誤放）
+Draft202012Validator(schema, format_checker=FormatChecker()).validate(data)
 ```
 
 ### 4. 建立費用明細檔

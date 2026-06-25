@@ -21,7 +21,8 @@ def format_country_region(trip: dict) -> str:
     country = (trip.get("country") or "").strip()
     city = (trip.get("city") or "").strip()
     if city and city != country:
-        return f"{country} {city}"
+        # country 缺漏時不留前導空格（雖 schema 規定 country 必填，helper 仍須穩健）
+        return f"{country} {city}".strip()
     return country
 
 

@@ -21,9 +21,26 @@ Full legal source list: [docs/sources/README.md](docs/sources/README.md)
 ## Features
 
 - **Per diem calculation**: handles self-paid deduction rules, Taiwan return-day 30% rate, and other scenarios per the reimbursement rules
-- **Trip report rendering**: HTML (browser-printable) and DOCX (editable Word format)
-- **Finance reimbursement sheet**: Appendix II Excel format
+- **Trip report rendering**: DOCX (editable Word, Appendix I format) trip report and Appendix II review form
+- **Pre-trip handbook** (optional): data-driven HTML (daily itinerary / lodging / emergency contacts / notes, all optional); open in a browser or `cmd+P` to print a PDF
+- **Finance planning sheet**: Excel travel-expense sheet; the Appendix II review form is rendered separately as DOCX
 - **Data validation**: schema validation of required fields and agency-required fields; summary character count 200–300 CJK characters, placeholder rejection
+
+---
+
+## Scope and Limitations
+
+This kit targets the **layer common to all agencies**: the Executive Yuan trip-report Appendix I/II format plus the overseas per-diem reimbursement calculation. It does not target any single agency's customized layout.
+
+**How it works**: you put your **data** into `trip.json` (agency, personnel, itinerary, dates), and the kit **generates** DOCX / XLSX / HTML aligned to that format. The kit **does not read or conform to an individual agency's own template files** (e.g. a university's report template `.odt` or expense form `.doc`).
+
+**Therefore**:
+
+- Most agencies' (including universities') trip reports and review forms inherit the Executive Yuan rules, so the output aligns closely; if your agency has a customized layout (logo, header, extra sign-off fields), add those on top of the generated DOCX.
+- Per-diem calculation follows the reimbursement rules, but the **fixed layout of an expense report form** (transport schedule table, meals/lodging checkboxes, multi-stage sign-off) is usually agency-specific; the kit outputs a generic worksheet, not a specific agency's form.
+- **Pre-trip application / approval forms** (e.g. a campus-fund overseas plan form with principal investigator, unit review, head approval) are agency-specific administrative workflow documents and are **out of scope**.
+
+In short: the kit provides the common base; the customization layer is left to each agency.
 
 ---
 

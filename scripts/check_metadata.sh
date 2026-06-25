@@ -10,7 +10,19 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PATTERN='heeact|HEEACT|高等教育評鑑|執行長|本會'
+
+# 機敏詞清單不內建（避免 lint 腳本本身洩漏在防哪個機構）。
+# 維護者設環境變數 TWGOK_EXTRA_DENYLIST 指向本機檔（每行一個 regex）後才掃 binary metadata。
+# 未設時，docx/xlsx 的 metadata 掃描略過（render 出的檔本就以合成範例資料為基礎，無機構 metadata）。
+if [ -z "${TWGOK_EXTRA_DENYLIST:-}" ] || [ ! -f "${TWGOK_EXTRA_DENYLIST}" ]; then
+  echo "PASS: 未設 TWGOK_EXTRA_DENYLIST，略過 binary metadata 機敏詞掃描"
+  exit 0
+fi
+PATTERN=$(grep -vE '^\s*(#|$)' "${TWGOK_EXTRA_DENYLIST}" | paste -sd '|' -)
+if [ -z "$PATTERN" ]; then
+  echo "PASS: TWGOK_EXTRA_DENYLIST 無有效詞，略過 metadata 掃描"
+  exit 0
+fi
 
 FOUND_ANY=0
 

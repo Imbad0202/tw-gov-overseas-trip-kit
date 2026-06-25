@@ -19,6 +19,12 @@ def test_country_region_no_city():
     assert format_country_region({"country": "泰國", "city": ""}) == "泰國"
 
 
+def test_country_region_empty_country_no_leading_space():
+    # country 缺漏時不可回傳前導空格「 東京」（即使 schema 規定 country 必填）
+    assert format_country_region({"country": "", "city": "東京"}) == "東京"
+    assert format_country_region({"city": "東京"}) == "東京"
+
+
 def test_too_short_fails():
     with pytest.raises(SummaryError):
         validate_summary("太短")

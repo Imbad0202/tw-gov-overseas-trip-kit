@@ -1,101 +1,66 @@
 #!/usr/bin/env bash
-# Layer A：機構通用字眼掃描（轉 public 前安全 gate）
+# 轉 public 前安全 gate：掃描 git 追蹤 / 未追蹤檔 + commit message 歷史。
 #
-# 掃描範圍：git 追蹤的 *.py *.md *.json *.html *.sh 檔案（含 tests/ 與 scripts/）。
-# 使用 git ls-files 自動排除 .gitignore 中的路徑（.superpowers/、data/ 等）。
+# 掃描範圍：*.py *.md *.json *.html *.sh（含 tests/ 與 scripts/），
+# 以 git ls-files 自動排除 .gitignore 路徑。
 #
-# 逐行排除合法模式（排除的是「行」，不是「整個目錄」）：
-#   - 含 'not in'      → 測試斷言（assert "HEEACT" not in ...），合法
-#   - 含 '零 HEEACT'   → render/ docstring 宣告「不含」，合法
-#   - 含 '無 HEEACT'   → 同上
-#   - 含 '不含 HEEACT' → 同上
-#   - 含 'PII'         → 測試 docstring 說明「檢查不含 PII markers (HEEACT ...)」，合法
-#   - 含 PATTERN=      → scripts 本身 PATTERN 變數定義行，合法
-#
-# 個人字眼（人名、機關內部 URL 等）不入此 script，走本機 personal-boundary hook。
+# 兩類 pattern：
+#   1. 通用普世洩漏（內建）：session URL、本機絕對路徑——任何 repo 都不該含。
+#   2. 機構／個人專屬機敏詞（選用，外部載入）：本工具本身不內建任何特定機關字眼，
+#      避免 lint 腳本反而洩漏「在防哪個機構」。維護者若需掃自己的機敏詞，
+#      設環境變數 TWGOK_EXTRA_DENYLIST 指向本機檔（每行一個 regex，# 開頭為註解），
+#      該檔不應提交進本 repo。格式見 scripts/extra-denylist.example.txt。
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-PATTERN='HEEACT|高等教育評鑑|財團法人高等教育|高評|評鑑中心|heeact|本會|執行長|處務聯席會議|EIP|教育部上呈|清邁|chiangmai|HERDSA|INQAAHE|AACSB|bali|tokyo|singapore'
-
-# P2-4：session URL / 本機絕對路徑洩漏偵測（public repo 不應含）
+# 通用普世洩漏：session URL / 本機絕對路徑（public repo 不應含）
 SESSION_PATTERN='Claude-Session|claude\.ai/code/session|/Users/|/home/[^/]'
 
-# 取得 git 追蹤的目標副檔名檔案（全目錄，含 tests/ 與 scripts/）
-HITS=$(
-  git -C "$REPO_ROOT" ls-files \
-    '*.py' '*.md' '*.json' '*.html' '*.sh' \
-  | while IFS= read -r rel; do
-      file="$REPO_ROOT/$rel"
-      grep -In -E "$PATTERN" "$file" \
-        | grep -vE 'not in' \
-        | grep -v '零 HEEACT' \
-        | grep -v '無 HEEACT' \
-        | grep -v '不含 HEEACT' \
-        | grep -v 'PII' \
-        | grep -v 'PATTERN=' \
-        | sed "s|^|$rel:|" \
-      || true
-    done
-)
-
-if [ -n "$HITS" ]; then
-  echo "FAIL: 命中機構字眼（追蹤檔）"
-  echo "$HITS"
-  exit 1
+# 選用：外部機敏詞清單（不進 repo）。組成額外 regex；無則留空（grep -E '' 會全中，故需判斷）。
+EXTRA_PATTERN=""
+if [ -n "${TWGOK_EXTRA_DENYLIST:-}" ] && [ -f "${TWGOK_EXTRA_DENYLIST}" ]; then
+  EXTRA_PATTERN=$(grep -vE '^\s*(#|$)' "${TWGOK_EXTRA_DENYLIST}" | paste -sd '|' -)
 fi
 
-# 盲區補強 1：未追蹤檔（如誤落 repo 的開發報告）也要掃——git ls-files 看不到
-UNTRACKED=$(
-  git -C "$REPO_ROOT" ls-files --others --exclude-standard \
-    '*.py' '*.md' '*.json' '*.html' '*.sh' \
-  | while IFS= read -r rel; do
-      grep -In -E "$PATTERN" "$REPO_ROOT/$rel" \
-        | grep -vE 'not in' | grep -v '零 HEEACT' | grep -v '無 HEEACT' \
-        | grep -v '不含 HEEACT' | grep -v 'PII' | grep -v 'PATTERN=' \
-        | sed "s|^|$rel:|" || true
-    done
-)
-if [ -n "$UNTRACKED" ]; then
-  echo "FAIL: 命中機構字眼（未追蹤檔——勿提交，或移出 repo）"
-  echo "$UNTRACKED"
-  exit 1
-fi
+TARGET_GLOBS=('*.py' '*.md' '*.json' '*.html' '*.sh')
 
-# 盲區補強 2：commit message 歷史（刪檔不刪歷史；commit msg 本身會洩漏）
-MSG_HITS=$(git -C "$REPO_ROOT" log --all --format='%H %s%n%b' \
-  | grep -InE "$PATTERN" | grep -v 'PATTERN=' || true)
-if [ -n "$MSG_HITS" ]; then
-  echo "FAIL: commit message 含機構字眼（需 rewrite 歷史）"
-  echo "$MSG_HITS"
-  exit 1
-fi
+# 對單一 pattern 掃一組檔案，命中即印（含檔名:行號）。pattern 為空則不掃。
+scan_files() {
+  local pattern="$1"; shift
+  local listcmd=("$@")
+  [ -z "$pattern" ] && return 0
+  git -C "$REPO_ROOT" "${listcmd[@]}" "${TARGET_GLOBS[@]}" \
+    | while IFS= read -r rel; do
+        grep -In -E "$pattern" "$REPO_ROOT/$rel" \
+          | grep -v 'SESSION_PATTERN=' | grep -v 'EXTRA_PATTERN=' \
+          | sed "s|^|$rel:|" || true
+      done
+}
 
-# P2-4：session URL / 本機絕對路徑洩漏（追蹤檔）
-SESSION_HITS=$(
-  git -C "$REPO_ROOT" ls-files \
-    '*.py' '*.md' '*.json' '*.html' '*.sh' \
-  | while IFS= read -r rel; do
-      grep -In -E "$SESSION_PATTERN" "$REPO_ROOT/$rel" \
-        | grep -v 'SESSION_PATTERN=' \
-        | sed "s|^|$rel:|" \
-      || true
-    done
-)
-if [ -n "$SESSION_HITS" ]; then
-  echo "FAIL: 命中 session URL 或本機絕對路徑（追蹤檔）"
-  echo "$SESSION_HITS"
-  exit 1
-fi
+fail_if() {  # $1=hits $2=訊息
+  if [ -n "$1" ]; then echo "FAIL: $2"; echo "$1"; exit 1; fi
+}
 
-# P2-4：session URL / 本機絕對路徑洩漏（commit message 歷史）
-SESSION_MSG_HITS=$(git -C "$REPO_ROOT" log --all --format='%H %s%n%b' \
-  | grep -InE "$SESSION_PATTERN" | grep -v 'SESSION_PATTERN=' || true)
-if [ -n "$SESSION_MSG_HITS" ]; then
-  echo "FAIL: commit message 含 session URL 或本機絕對路徑（需 rewrite 歷史）"
-  echo "$SESSION_MSG_HITS"
-  exit 1
-fi
+# 1. 通用普世洩漏（追蹤檔）
+fail_if "$(scan_files "$SESSION_PATTERN" ls-files)" "命中 session URL 或本機絕對路徑（追蹤檔）"
+# 1b. 通用普世洩漏（未追蹤檔——git ls-files 看不到，誤落 repo 的開發報告等）
+fail_if "$(scan_files "$SESSION_PATTERN" ls-files --others --exclude-standard)" \
+        "命中 session URL 或本機絕對路徑（未追蹤檔——勿提交，或移出 repo）"
+# 1c. 通用普世洩漏（commit message 歷史；刪檔不刪歷史）
+fail_if "$(git -C "$REPO_ROOT" log --all --format='%H %s%n%b' \
+            | grep -InE "$SESSION_PATTERN" | grep -v 'SESSION_PATTERN=' || true)" \
+        "commit message 含 session URL 或本機絕對路徑（需 rewrite 歷史）"
 
-echo "PASS: 無機構字眼 + 無 session URL / 本機路徑（追蹤檔 + 未追蹤檔 + commit message 歷史皆掃）"
+# 2. 外部機敏詞（追蹤檔 + 未追蹤檔 + commit message），僅在維護者設了 denylist 時生效
+if [ -n "$EXTRA_PATTERN" ]; then
+  fail_if "$(scan_files "$EXTRA_PATTERN" ls-files)" "命中機敏詞（追蹤檔，來自 TWGOK_EXTRA_DENYLIST）"
+  fail_if "$(scan_files "$EXTRA_PATTERN" ls-files --others --exclude-standard)" \
+          "命中機敏詞（未追蹤檔，來自 TWGOK_EXTRA_DENYLIST）"
+  fail_if "$(git -C "$REPO_ROOT" log --all --format='%H %s%n%b' \
+              | grep -InE "$EXTRA_PATTERN" | grep -v 'EXTRA_PATTERN=' || true)" \
+          "commit message 含機敏詞（來自 TWGOK_EXTRA_DENYLIST，需 rewrite 歷史）"
+  echo "PASS: 無 session URL / 本機路徑，且無 TWGOK_EXTRA_DENYLIST 機敏詞（追蹤檔 + 未追蹤檔 + commit 歷史）"
+else
+  echo "PASS: 無 session URL / 本機路徑（追蹤檔 + 未追蹤檔 + commit 歷史）。未設 TWGOK_EXTRA_DENYLIST，略過機敏詞掃描"
+fi

@@ -1,9 +1,11 @@
 """
-Task 11 — Examples validation tests.
+Examples validation tests.
 Verifies that synthetic example files:
 1. Pass trip.schema.json validation
 2. Pass trip-finance.schema.json validation
-3. Contain no real PII markers (HEEACT / 高等教育評鑑)
+3. Are clearly synthetic (carry placeholder / demo markers), so no real agency
+   data has crept in — asserted positively to avoid hard-coding any real
+   organization name in a public repo.
 """
 import json
 import pathlib
@@ -28,8 +30,13 @@ def test_sample_finance_valid():
     validate(data, FIN_SCHEMA)
 
 
-def test_no_real_pii_in_examples():
+def test_examples_are_synthetic():
+    """每個 example 必須帶合成標記（示範 / ○○ / △△），確保未混入真實機關資料。
+    正向斷言（要求合成標記存在），不黑名單特定機構名——後者會在 public repo
+    洩漏防護對象，且漏列就失效。"""
+    markers = ("示範", "○○", "△△")
     for f in (REPO / "examples").glob("*.json"):
         txt = f.read_text(encoding="utf-8")
-        assert "HEEACT" not in txt, f"{f.name} contains 'HEEACT'"
-        assert "高等教育評鑑" not in txt, f"{f.name} contains '高等教育評鑑'"
+        assert any(m in txt for m in markers), (
+            f"{f.name} 未帶任何合成標記 {markers}，疑似混入真實資料"
+        )
