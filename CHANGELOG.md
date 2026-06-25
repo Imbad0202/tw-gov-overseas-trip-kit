@@ -6,6 +6,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.2.0] — 2026-06-25
+
+### 新增
+
+- **出國報告書本文撰寫提示**：本文三章節（壹目的／貳過程／參心得及建議）原為標題＋空白段落，使用者只填基本欄位即交件會產出空殼報告。改為在各章節放灰色括號撰寫提示，引導使用者依出差實況（會議逐字稿／筆記／參訪記錄）充實本文；SKILL.md 加「充實報告本文」引導，讓 AI 主動請使用者提供素材。本工具不提供逐字稿錄製／轉錄功能；機敏素材提醒依生成式 AI 使用規範處理。
+- **sponsorship**：`.github/FUNDING.yml` 設 Buy Me a Coffee，README 加 Sponsor badge 與「支持這個專案」段（中英）。
+
+### 變更
+
+- **README 補跨 vendor skill 使用段 + version badge**（中英）：說明 skill.zip／plugin／AGENTS-GEMINI／clone 各入口，補回原本缺少的版本標記。
+
+---
+
 ## [1.1.0] — 2026-06-25
 
 ### 新增

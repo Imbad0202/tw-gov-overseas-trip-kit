@@ -1,6 +1,6 @@
 ---
 name: tw-gov-overseas-trip-kit
-version: 1.1.0
+version: 1.2.0
 description: >
   台灣公務機關出國報告文件產生工具。對齊行政院出國報告綜合處理要點附件一／二格式，
   援引國外出差旅費報支要點（114.05.13）計算日支費。從一份 trip.json 產出四種文件：
