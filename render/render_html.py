@@ -13,7 +13,7 @@
 import html
 import pathlib
 
-from render.validators import validate_dates
+from render.validators import format_country_region, validate_dates
 
 TEMPLATE = pathlib.Path(__file__).parent / "templates" / "pre_trip.html"
 
@@ -35,11 +35,7 @@ def _render_basic_info(data: dict) -> str:
     traveler = data["traveler"]
     trip = data["trip"]
 
-    country_region = (
-        f"{_e(trip['country'])} {_e(trip['city'])}".strip()
-        if trip.get("city")
-        else _e(trip["country"])
-    )
+    country_region = _e(format_country_region(trip))
 
     rows = [
         ("機關全銜", _e(agency["full_name"])),

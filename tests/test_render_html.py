@@ -26,6 +26,14 @@ def test_no_hardcoded_agency(tmp_path):
     assert "△△署" in html
 
 
+def test_country_equals_city_not_duplicated(tmp_path):
+    """城市即國家時，派赴國家地區不可印成「新加坡 新加坡」。"""
+    data = {**DATA, "trip": {**DATA["trip"], "country": "新加坡", "city": "新加坡"}}
+    html = _render(tmp_path, data, "sg.html")
+    assert "新加坡 新加坡" not in html
+    assert "新加坡" in html
+
+
 # ── 行前手冊：可選區塊（甲-基礎） ───────────────────────────────────────────
 
 # 以 <h2> 標題標籤判斷區塊是否「實際渲染」——CSS 註解含中文區塊名，

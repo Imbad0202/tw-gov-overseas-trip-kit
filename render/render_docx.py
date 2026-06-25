@@ -3,7 +3,7 @@ from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn
 from render.docx_fonts import set_run_font
-from render.validators import validate_summary, validate_dates
+from render.validators import format_country_region, validate_summary, validate_dates
 
 # 附件二審核表 10 項逐字（renderer contract，不可改字）
 REVIEW_ITEMS = [
@@ -91,7 +91,7 @@ def render_report_docx(data: dict, out_path: str) -> None:
     # 封面欄位（含單位）
     for label, val in [("服務機關", agency["full_name"]), ("單位", agency.get("unit", "")),
                        ("職稱姓名", f"{data['traveler'].get('title', '')} {data['traveler']['name']}"),
-                       ("派赴國家地區", f"{trip['country']}{' ' + trip['city'] if trip.get('city') else ''}"),
+                       ("派赴國家地區", format_country_region(trip)),
                        ("出國期間", f"{trip['start_date']}～{trip['end_date']}")]:
         pc = doc.add_paragraph(); pc.alignment = WD_ALIGN_PARAGRAPH.CENTER
         set_run_font(pc.add_run(f"{label}：{val}"), size_pt=14, bold=True)

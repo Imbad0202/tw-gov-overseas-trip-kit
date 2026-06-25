@@ -1,6 +1,22 @@
 """Tests for render/validators.py — summary validator + date validator (TDD, fail-fast)."""
 import pytest
-from render.validators import validate_summary, SummaryError, validate_dates, DateError
+from render.validators import (
+    validate_summary, SummaryError, validate_dates, DateError, format_country_region,
+)
+
+
+def test_country_region_with_distinct_city():
+    assert format_country_region({"country": "日本", "city": "東京"}) == "日本 東京"
+
+
+def test_country_region_dedupes_same_city_and_country():
+    # 城市即國家（新加坡、梵蒂岡等）不可印成「新加坡 新加坡」
+    assert format_country_region({"country": "新加坡", "city": "新加坡"}) == "新加坡"
+
+
+def test_country_region_no_city():
+    assert format_country_region({"country": "泰國"}) == "泰國"
+    assert format_country_region({"country": "泰國", "city": ""}) == "泰國"
 
 
 def test_too_short_fails():

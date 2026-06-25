@@ -14,6 +14,17 @@ class DateError(ValueError):
 PLACEHOLDERS = ("○○", "TODO", "待填", "XXX", "範例")
 
 
+def format_country_region(trip: dict) -> str:
+    """組「派赴國家地區」字串：country + city，city 與 country 同名時去重
+    （避免印出「新加坡 新加坡」這類城市即國家的重複）。html / docx 共用，
+    確保兩個 deliverable 的地點呈現一致。"""
+    country = (trip.get("country") or "").strip()
+    city = (trip.get("city") or "").strip()
+    if city and city != country:
+        return f"{country} {city}"
+    return country
+
+
 def _cjk_count(text: str) -> int:
     return len(re.findall(r"[一-鿿]", text))
 
