@@ -6,6 +6,30 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.1.0] — 2026-06-25
+
+### 新增
+
+- **行前手冊（可選 deliverable）**：`render/render_html.py` 從單薄的行前須知重做成資料驅動的完整行前手冊，支援逐日議程／住宿／緊急聯絡／注意事項（皆選填、缺漏即不渲染），多日多段行程，通用中性視覺，可瀏覽器開啟或 `cmd+P` 列印 PDF。
+- **跨 vendor skill 打包**：SKILL.md 補 YAML frontmatter（name／version／description），可作 claude.ai／cowork 的 skill 使用；新增 `.claude-plugin/plugin.json` 供 Claude Code plugin 載入；`AGENTS.md`／`GEMINI.md` symlink 至 SKILL.md，供 Codex／Gemini 等其他 vendor 通用。
+
+### 變更
+
+- **README／README_EN 補「適用範圍與限制」**：工具對齊行政院附件一／二共通底層格式，不讀取個別機關自訂範本；客製版面與事前申請簽核表留各機關自補。
+- **行前手冊內文字級全面 ≥14px**（含列印基準），確保印出 PDF 攜帶時不偏小。
+
+### 修正
+
+- **派赴國家地區 country==city 去重**：抽 `validators.format_country_region` 共用 helper，html／docx 一致，避免印出「新加坡 新加坡」。
+- **文件驗證範例改用 `Draft202012Validator` + `FormatChecker`**，使 schema `"format": "date"` 確實生效。
+
+### 安全（轉 public 強化）
+
+- 移除程式與測試中寫死的特定機構字眼。
+- PII lint 機敏詞清單外移本機（`TWGOK_EXTRA_DENYLIST` 環境變數載入），repo 內僅保留普世洩漏偵測（session URL／本機路徑），避免 lint 腳本本身洩漏防護對象；新增 `scripts/extra-denylist.example.txt` 示範格式。
+
+---
+
 ## [1.0.0] — 2026-06-24
 
 ### 首版發布
