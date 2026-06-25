@@ -41,6 +41,79 @@
         "organization": {"type": "string", "description": "境外主辦單位（與 agency 分離）"}
       }
     },
-    "summary": {"type": "string", "description": "附件一摘要，renderer 檢查 200-300 中文字"}
+    "summary": {"type": "string", "description": "附件一摘要，renderer 檢查 200-300 中文字"},
+    "itinerary": {
+      "type": "array",
+      "description": "行前手冊（可選）逐日議程／行程表；空或省略則不渲染該區塊",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["items"],
+        "properties": {
+          "date": {"type": "string", "format": "date", "description": "該日日期（ISO 8601）；可省略，僅以 label 標示時"},
+          "label": {"type": "string", "minLength": 1, "description": "該日標題，例如『第一日・抵達』或『行前準備』"},
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["activity"],
+              "properties": {
+                "time": {"type": "string", "minLength": 1, "description": "時間，彈性表述（『09:00』『上午』『全日』皆可）"},
+                "activity": {"type": "string", "minLength": 1, "description": "事項／議程內容"},
+                "location": {"type": "string", "minLength": 1, "description": "地點"},
+                "note": {"type": "string", "minLength": 1, "description": "備註"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "lodging": {
+      "type": "array",
+      "description": "行前手冊（可選）住宿；多段行程可多筆，空或省略則不渲染",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1, "description": "住宿名稱"},
+          "address": {"type": "string", "minLength": 1, "description": "地址"},
+          "phone": {"type": "string", "minLength": 1, "description": "電話"},
+          "check_in": {"type": "string", "minLength": 1, "description": "入住日期或時段"},
+          "check_out": {"type": "string", "minLength": 1, "description": "退房日期或時段"},
+          "note": {"type": "string", "minLength": 1, "description": "備註"}
+        }
+      }
+    },
+    "emergency_contacts": {
+      "type": "array",
+      "description": "行前手冊（可選）緊急聯絡，例如駐外館處、境外主辦、家屬；空或省略則不渲染",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label"],
+        "properties": {
+          "label": {"type": "string", "minLength": 1, "description": "聯絡類別，例如『駐外館處』『境外主辦』『緊急醫療』"},
+          "name": {"type": "string", "minLength": 1, "description": "聯絡人或單位名稱"},
+          "phone": {"type": "string", "minLength": 1, "description": "電話"},
+          "note": {"type": "string", "minLength": 1, "description": "備註，例如時差、語言、地址"}
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "description": "行前手冊（可選）注意事項清單；空或省略則不渲染",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
   }
 }

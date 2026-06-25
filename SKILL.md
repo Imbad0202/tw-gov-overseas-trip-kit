@@ -9,13 +9,14 @@
 ## 目錄
 
 1. [四個輸出文件用途](#四個輸出文件用途)
-2. [輸入 schema 路徑](#輸入-schema-路徑)
-3. [啟動流程：帶入你機關的範例](#啟動流程帶入你機關的範例)
-4. [日支基準額填值流程（`per_diem_base`）](#日支基準額填值流程per_diem_base)
-5. [B 類人工值填入](#b-類人工值填入)
-6. [計算器 scope 邊界](#計算器-scope-邊界)
-7. [docx 轉 PDF 指引](#docx-轉-pdf-指引)
-8. [法規版本鎖定提醒與免責聲明](#法規版本鎖定提醒與免責聲明)
+2. [行前手冊（可選 deliverable）](#行前手冊可選-deliverable)
+3. [輸入 schema 路徑](#輸入-schema-路徑)
+4. [啟動流程：帶入你機關的範例](#啟動流程帶入你機關的範例)
+5. [日支基準額填值流程（`per_diem_base`）](#日支基準額填值流程per_diem_base)
+6. [B 類人工值填入](#b-類人工值填入)
+7. [計算器 scope 邊界](#計算器-scope-邊界)
+8. [docx 轉 PDF 指引](#docx-轉-pdf-指引)
+9. [法規版本鎖定提醒與免責聲明](#法規版本鎖定提醒與免責聲明)
 
 ---
 
@@ -26,18 +27,52 @@
 | 出國報告書（`.docx`） | `render.render_docx.render_report_docx(data, out_path)` | 對齊行政院出國報告綜合處理要點**附件一**格式，含封面、摘要、壹目的/貳過程/參心得及建議章節與頁碼。為可編輯 Word 文件，送核前於 Word 補填本文內容。 |
 | 審核表（`.docx`） | `render.render_docx.render_review_table_docx(data, out_path)` | 對齊**附件二**審核表，10 項勾選欄（出國人員自我檢核 + 計畫主辦機關審核）+ 三段簽章列。 |
 | 經費規劃表（`.xlsx`） | `render.render_finance_xlsx.render_finance_xlsx(data, out_path)` | 逐日日支明細 + B 類人工項目 + 尾數進位整數總計（美元）+ 動態簽章列。 |
-| 行前須知（`.html`） | `render.render_html.render_html(data, out_path)` | 機關參數化行前提示頁，可直接用瀏覽器開啟或列印。 |
+| 行前手冊（`.html`，**可選**） | `render.render_html.render_html(data, out_path)` | 供出差同仁攜帶的行前手冊，資料驅動：逐日議程／住宿／緊急聯絡／注意事項皆為選填，缺漏即不渲染該區塊。可直接用瀏覽器開啟，或 `cmd+P` 列印為 PDF。詳見〈行前手冊（可選 deliverable）〉一節。 |
 
 報告書 docx 與審核表 docx 讀取 `schema/trip.schema.json` 格式的資料；
 經費規劃表讀取 `schema/trip-finance.schema.json` 格式的資料；
-行前須知 HTML 讀取 `schema/trip.schema.json` 格式的資料。
+行前手冊 HTML 讀取 `schema/trip.schema.json` 格式的資料。
+
+---
+
+## 行前手冊（可選 deliverable）
+
+行前手冊是供出差同仁攜帶的整理頁，**非必產**：每個機關、每趟出差未必都有需求。報告書、審核表、經費規劃表是核銷與上呈所需，行前手冊則是依需要才產生。
+
+### 資料驅動，缺漏即不渲染
+
+手冊讀 `trip.schema.json`，下列四個區塊**全部選填**，缺欄位或填空陣列時，該區塊完全不出現（不留空表格、不印佔位字）：
+
+| 區塊 | 欄位 | 說明 |
+|---|---|---|
+| `itinerary` | 逐日陣列，每日 `{date?, label?, items[]}`；item `{time?, activity, location?, note?}` | 逐日議程／行程表。`items` 與 `activity` 為必填，其餘選填。支援多日多段（多天、每天多個時段）。 |
+| `lodging` | 陣列 `{name, address?, phone?, check_in?, check_out?, note?}` | 住宿資訊。多段行程可多筆。`name` 必填。 |
+| `emergency_contacts` | 陣列 `{label, name?, phone?, note?}` | 緊急聯絡，例如駐外館處、境外主辦、國內承辦窗口。`label` 必填。 |
+| `notes` | 字串陣列 | 注意事項清單（簽證、時差、核銷、保密等）。 |
+
+只填基本資訊（機關、出國人員、國家、期間、類別）也能產出——此時手冊只有抬頭資訊區，四個可選區塊都不渲染。
+
+### 產生與列印
+
+```python
+from render.render_html import render_html
+render_html(trip, "handbook.html")
+```
+
+產出為單一 self-contained HTML（內嵌樣式、無外部字型或 CDN，可離線開啟）。瀏覽器開啟後 `cmd+P`（macOS）／`Ctrl+P`（Windows）即可列印或另存 PDF；樣式已設定 A4 版面與分頁，列印時自動避免區塊被切斷。
+
+格式不限定固定版面：政府訪問團、外交行程等較複雜的多日多段行程，靠 `itinerary` 的逐日結構承載，機關按需填入需要的區塊即可。
+
+### 進一步美化（可選，非依賴）
+
+本工具產出的手冊採通用中性視覺，已可直接交付使用。若希望針對特定場合再做視覺打磨，可自行搭配 `impeccable` 等前端設計 skill 對產出的 HTML 再加工。**此為選用項目，工具本身不依賴、也不會自動呼叫任何外部 skill**；未安裝這類 skill 不影響手冊正常產出。
 
 ---
 
 ## 輸入 schema 路徑
 
 ```
-schema/trip.schema.json          ← 報告書 / 行前須知 / 審核表
+schema/trip.schema.json          ← 報告書 / 行前手冊 / 審核表
 schema/trip-finance.schema.json  ← 經費規劃表
 ```
 

@@ -1,12 +1,227 @@
 <!DOCTYPE html>
-<html lang="zh-Hant"><head><meta charset="utf-8">
-<title>{agency} 出國行前須知</title></head>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><!--HANDBOOK_TITLE--></title>
+  <style>
+    /* ===== 基礎排版 ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, "PingFang TC", "Microsoft JhengHei", "Noto Sans TC",
+                   "Source Han Sans TC", sans-serif;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #1a1a1a;
+      background: #ffffff;
+      padding: 2rem 2.5rem;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    /* ===== 頁首 ===== */
+    .doc-header {
+      text-align: center;
+      border-bottom: 2px solid #2c3e50;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .doc-header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #2c3e50;
+    }
+    .doc-header .subtitle {
+      font-size: 0.85rem;
+      color: #555;
+      margin-top: 0.25rem;
+    }
+
+    /* ===== 基本資訊區 ===== */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 8em 1fr;
+      gap: 0.25rem 0.5rem;
+      background: #f7f8fa;
+      border: 1px solid #d0d6de;
+      border-radius: 4px;
+      padding: 0.9rem 1.1rem;
+      margin-bottom: 1.5rem;
+    }
+    .info-grid .label {
+      font-weight: 600;
+      color: #444;
+      white-space: nowrap;
+    }
+    .info-grid .value {
+      color: #1a1a1a;
+    }
+
+    /* ===== 區塊標題 ===== */
+    section {
+      margin-bottom: 1.5rem;
+      break-inside: avoid;
+    }
+    section h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+      background: #2c3e50;
+      padding: 0.35rem 0.75rem;
+      border-radius: 3px;
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* ===== 逐日議程 ===== */
+    .day-block {
+      margin-bottom: 1rem;
+      break-inside: avoid;
+    }
+    .day-label {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+    }
+
+    /* 逐日議程與住宿共用表格樣式 */
+    table.itinerary-table,
+    table.lodging-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    table.itinerary-table th,
+    table.lodging-table th {
+      background: #e8ecf0;
+      color: #333;
+      font-weight: 600;
+      text-align: left;
+      padding: 0.35rem 0.6rem;
+      border: 1px solid #c0c8d0;
+      white-space: nowrap;
+    }
+    table.itinerary-table td,
+    table.lodging-table td {
+      padding: 0.35rem 0.6rem;
+      border: 1px solid #c0c8d0;
+      vertical-align: top;
+    }
+    /* 斑馬紋僅議程表 */
+    table.itinerary-table tr:nth-child(even) td {
+      background: #f9fafb;
+    }
+    .item-note {
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: 0.2rem;
+    }
+
+    /* ===== 緊急聯絡 ===== */
+    .contact-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 0.75rem;
+    }
+    .contact-card {
+      border: 1px solid #c8d0da;
+      border-radius: 4px;
+      padding: 0.6rem 0.8rem;
+      break-inside: avoid;
+    }
+    .contact-card .contact-label {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #2c3e50;
+      margin-bottom: 0.25rem;
+      border-bottom: 1px solid #e0e5eb;
+      padding-bottom: 0.2rem;
+    }
+    .contact-card .contact-line {
+      font-size: 0.85rem;
+      color: #333;
+      margin-top: 0.15rem;
+    }
+    .contact-card .contact-phone {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #c0392b;
+    }
+
+    /* ===== 注意事項 ===== */
+    .notes-list {
+      padding-left: 1.4rem;
+      font-size: 0.88rem;
+    }
+    .notes-list li {
+      margin-bottom: 0.35rem;
+      color: #333;
+    }
+
+    /* ===== 頁腳 ===== */
+    .doc-footer {
+      margin-top: 2rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid #d0d6de;
+      font-size: 0.78rem;
+      color: #888;
+      text-align: center;
+    }
+
+    /* ===== 列印樣式 ===== */
+    @page {
+      size: A4;
+      margin: 18mm 16mm 18mm 16mm;
+    }
+
+    @media print {
+      body {
+        font-size: 12px;
+        padding: 0;
+        max-width: 100%;
+      }
+      .doc-header h1 {
+        font-size: 1.2rem;
+      }
+      section {
+        break-inside: avoid;
+      }
+      .day-block {
+        break-inside: avoid;
+      }
+      .contact-card {
+        break-inside: avoid;
+      }
+      table.itinerary-table,
+      table.lodging-table {
+        break-inside: auto;
+      }
+      table.itinerary-table tr,
+      table.lodging-table tr {
+        break-inside: avoid;
+      }
+      /* 列印時隱藏螢幕裝飾元素 */
+      .doc-footer {
+        display: none;
+      }
+    }
+  </style>
+</head>
 <body>
-<h1>{agency} 出國行前須知</h1>
-<p>出國人員：{traveler}</p>
-<p>派赴國家地區：{country_region}　期間：{start}～{end}　類別：{category}</p>
-<section><h2>行前提醒</h2><ul>
-<li>請依貴機關規定完成出差核准程序。</li>
-<li>日支、旅費報支依國外出差旅費報支要點及貴機關自訂規定辦理。</li>
-</ul></section>
-</body></html>
+
+  <div class="doc-header">
+    <h1><!--HANDBOOK_TITLE--></h1>
+    <div class="subtitle">出國公差行前手冊</div>
+  </div>
+
+  <!--HANDBOOK_BODY-->
+
+  <div class="doc-footer">
+    本手冊由系統自動產生，僅供本次出差參考使用。
+  </div>
+
+</body>
+</html>

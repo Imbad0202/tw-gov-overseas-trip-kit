@@ -36,5 +36,62 @@
     "_comment_organization": "選填：境外主辦單位全名"
   },
   "summary": "",
-  "_comment_summary": "選填：附件一摘要，renderer 將檢查字數（200-300 中文字）"
+  "_comment_summary": "選填：附件一摘要，renderer 將檢查字數（200-300 中文字）",
+  "itinerary": [
+    {
+      "_comment": "逐日議程（整個 itinerary 陣列選填；省略或空陣列則行前手冊不渲染此區塊）",
+      "_comment_date": "選填：ISO 8601 日期，例如「2027-09-01」",
+      "date": "",
+      "_comment_label": "選填：當天標題，例如「第一日・抵達曼谷」；date 與 label 至少擇一填寫",
+      "label": "",
+      "items": [
+        {
+          "_comment": "議程事項（items 陣列必填且至少一筆；activity 為必填欄位）",
+          "_comment_time": "選填：時間，彈性表述，例如「09:00」「上午」「全日」",
+          "time": "",
+          "activity": "",
+          "_comment_activity": "必填：事項或議程內容",
+          "_comment_location": "選填：地點",
+          "location": "",
+          "_comment_note": "選填：備註",
+          "note": ""
+        }
+      ]
+    }
+  ],
+  "lodging": [
+    {
+      "_comment": "住宿資訊（整個 lodging 陣列選填；多段行程可多筆；省略或空陣列則不渲染）",
+      "name": "",
+      "_comment_name": "必填：住宿名稱，例如「示範大飯店 Demo Grand Hotel」",
+      "_comment_address": "選填：地址（英文或當地文字）",
+      "address": "",
+      "_comment_phone": "選填：飯店電話（含國碼）",
+      "phone": "",
+      "_comment_check_in": "選填：入住日期或時段，例如「2027-09-01」或「9/1 下午」",
+      "check_in": "",
+      "_comment_check_out": "選填：退房日期或時段",
+      "check_out": "",
+      "_comment_note": "選填：備註，例如訂房確認碼、發票需求",
+      "note": ""
+    }
+  ],
+  "emergency_contacts": [
+    {
+      "_comment": "緊急聯絡（整個 emergency_contacts 陣列選填；省略或空陣列則不渲染）",
+      "label": "",
+      "_comment_label": "必填：聯絡類別，例如「駐外館處」「境外主辦」「緊急醫療」",
+      "_comment_name": "選填：聯絡人姓名或單位名稱",
+      "name": "",
+      "_comment_phone": "選填：電話號碼（含國碼）",
+      "phone": "",
+      "_comment_note": "選填：備註，例如時差、語言、辦公時間、地址",
+      "note": ""
+    }
+  ],
+  "notes": [
+    "_comment_notes_intro: 注意事項清單（整個 notes 陣列選填；每筆為一條字串；省略或空陣列則不渲染）",
+    "_comment_example: 填入格式範例：「簽證：持中華民國護照赴XX國免簽，護照效期須6個月以上。」",
+    "_comment_example2: 依序填入簽證、時差、核銷、行動通訊、健康安全、保密等提醒事項"
+  ]
 }

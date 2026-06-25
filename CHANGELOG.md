@@ -17,7 +17,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **日支費計算器**（`calc/per_diem.py`）：依報支要點規則計算出差日支費，支援返國當日30%折算、供膳宿補足至10%、長期駐留遞減（逾1月80%／逾3月70%）、核准日數邊界等情境。
 - **資料驗證**（`render/validators.py`）：摘要字數 200–300 中文字、禁交占位符（fail-fast 前置驗證）。
 - **Schema 定義**（`schema/trip.schema.json`、`schema/trip-finance.schema.json`）：出國報告與財務表格欄位結構（JSON Schema），對齊附件一／二欄位名稱。
-- **HTML 渲染**（`render/render_html.py`）：輸出符合附件一格式之 HTML 出國報告。
+- **行前手冊 HTML 渲染**（`render/render_html.py`，**可選 deliverable**）：輸出供出差同仁攜帶的行前手冊，資料驅動，逐日議程／住宿／緊急聯絡／注意事項皆為選填（缺漏即不渲染該區塊），支援多日多段行程，採通用中性視覺、可瀏覽器開啟或 `cmd+P` 列印 PDF。
 - **DOCX 渲染**（`render/render_docx.py`）：輸出可直接列印之 Word 格式出國報告；`render_review_table_docx` 產出機關內部審查表。
 - **財務 Excel 渲染**（`render/render_finance_xlsx.py`）：輸出旅費規劃表（Excel）；`render_review_table_docx` 另產出附件二格式之審核表（DOCX）。
 - **合成範例資料**（`examples/`）：提供合成假資料供測試與示範，不含個資。
