@@ -2,6 +2,7 @@
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn
+from docx.shared import RGBColor
 from render.docx_fonts import set_run_font
 from render.validators import format_country_region, validate_summary, validate_dates
 
@@ -100,10 +101,18 @@ def render_report_docx(data: dict, out_path: str) -> None:
     # 摘要
     ps = doc.add_paragraph(); set_run_font(ps.add_run("摘要"), size_pt=12, bold=True)
     pst = doc.add_paragraph(); set_run_font(pst.add_run(data["summary"]), size_pt=12)
-    # 本文章節
+    # 本文章節：標題 + 灰色撰寫提示（提醒本文須依出差實況充實，非留空交件）
+    _BODY_HINTS = {
+        "壹、目的": "（撰寫提示：依出差實況補寫本段；可參考行前計畫、邀請函、簽辦資料。完成後請刪除本行。）",
+        "貳、過程": "（撰寫提示：依出差逐字稿／會議筆記／觀察記錄補寫本段，使內容完整翔實，非僅填基本資訊。涉及機密或他人個資之素材，請依貴機關規定及生成式 AI 使用規範處理。完成後請刪除本行。）",
+        "參、心得及建議": "（撰寫提示：依出差所得補寫心得，建議事項請逐項分列；倘無建議請寫「無」。完成後請刪除本行。）",
+    }
     for head in ("壹、目的", "貳、過程", "參、心得及建議"):
         ph = doc.add_paragraph(); set_run_font(ph.add_run(head), size_pt=12, bold=True)
-        pb = doc.add_paragraph(); set_run_font(pb.add_run(""), size_pt=12)
+        pb = doc.add_paragraph()
+        hint_run = pb.add_run(_BODY_HINTS[head])
+        set_run_font(hint_run, size_pt=12)
+        hint_run.font.color.rgb = RGBColor(0x80, 0x80, 0x80)  # 灰色，明示為待刪提示
 
     _add_page_number(sec)
     doc.save(out_path)

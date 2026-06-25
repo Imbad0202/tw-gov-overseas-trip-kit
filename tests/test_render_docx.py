@@ -26,3 +26,18 @@ def test_bad_summary_fails(tmp_path):
     bad = {**DATA, "summary": "太短"}
     with pytest.raises(Exception):
         render_report_docx(bad, str(tmp_path / "x.docx"))
+
+
+def test_body_sections_have_grey_writing_hints(tmp_path):
+    """本文三章節須有灰色撰寫提示（提醒充實本文、非留空），且為灰色（明示待刪）。"""
+    from docx.shared import RGBColor
+    out = tmp_path / "report.docx"
+    render_report_docx(DATA, str(out))
+    doc = Document(str(out))
+    hint_paras = [p for p in doc.paragraphs if "撰寫提示" in p.text]
+    assert len(hint_paras) == 3, f"應有 3 段撰寫提示，實得 {len(hint_paras)}"
+    # 過程章節的提示須提及逐字稿/筆記（引導使用者用素材充實本文）
+    assert any("逐字稿" in p.text and "機密" in p.text for p in hint_paras)
+    # 提示須為灰色
+    for p in hint_paras:
+        assert p.runs and p.runs[0].font.color.rgb == RGBColor(0x80, 0x80, 0x80)

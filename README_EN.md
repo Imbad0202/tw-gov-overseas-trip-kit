@@ -94,6 +94,8 @@ Besides calling it as a Python package, this toolkit is packaged as an AI skill 
 
 When using it, have the AI bring in your agency's data (`trip.json`) and fill `per_diem_base` from the current-year official per-diem table (the table is not bundled). For advanced usage see [SKILL.md](SKILL.md).
 
+> **The report body must be filled in by you**: the three body sections of the trip report (Purpose / Process / Reflections & Recommendations) are generated as a "heading + writing prompt" skeleton, **not finished content**. Filling only the basic fields and summary yields a hollow report. Use your trip materials (meeting transcripts, notes, visit records) to flesh out the body. **This tool does not record or transcribe; you supply the materials.** If materials contain confidential or others' personal data, handle them per the Executive Yuan's generative-AI guidelines and your agency's rules (see [DISCLAIMER.md](DISCLAIMER.md)).
+
 ---
 
 ## Disclaimer
