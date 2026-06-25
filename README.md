@@ -1,5 +1,8 @@
 # tw-gov-overseas-trip-kit
 
+[![Version](https://img.shields.io/badge/version-v1.1.0-blue)](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 台灣公務機關出國報告文件產生工具，對齊**行政院出國報告綜合處理要點附件一／二**格式，並援引**國外出差旅費報支要點**（114.05.13 修正）計算規則。
 
 > English version: [README_EN.md](README_EN.md)
@@ -74,6 +77,21 @@ render_finance_xlsx(fin, "finance.xlsx")
 ```
 
 詳見 `examples/` 目錄中的合成範例。
+
+---
+
+## 作為 AI Skill 使用（跨 vendor）
+
+除了當 Python 套件直接呼叫，本工具也封裝為 AI skill，可在多種 AI 工具中使用。核心是帶 frontmatter 的 `SKILL.md`，各 vendor 入口指向同一份內容：
+
+| 使用情境 | 入口 | 做法 |
+|---|---|---|
+| claude.ai / cowork | `skill.zip` | 至 [Releases](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/releases) 下載 `tw-gov-overseas-trip-kit-skill-vX.Y.Z.zip` 上傳載入 |
+| Claude Code | `.claude-plugin/plugin.json` | clone 後以 plugin 載入，或 `git clone` 至 `~/.claude/skills/` |
+| Codex / Gemini 等 CLI | `AGENTS.md` / `GEMINI.md` | clone 後置於工作目錄，agent 會讀取（兩者皆指向 `SKILL.md`） |
+| 任何 vendor | clone 即用 | clone repo，各入口檔在根目錄就位 |
+
+使用時請 AI 帶入貴機關資料（`trip.json`），並依當年度官方日支表填 `per_diem_base`（工具不內建日支數額表）。進階用法見 [SKILL.md](SKILL.md)。
 
 ---
 

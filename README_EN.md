@@ -1,5 +1,8 @@
 # tw-gov-overseas-trip-kit
 
+[![Version](https://img.shields.io/badge/version-v1.1.0-blue)](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 Document generation toolkit for Taiwan government overseas trip reports, aligned with the **Executive Yuan Overseas Trip Report Processing Guidelines (Appendix I/II)** format, and referencing the **Overseas Travel Expense Reimbursement Rules** (amended 2025-05-13).
 
 > 中文版：[README.md](README.md)
@@ -74,6 +77,21 @@ render_finance_xlsx(fin, "finance.xlsx")
 ```
 
 See `examples/` for synthetic sample data.
+
+---
+
+## Use as an AI Skill (cross-vendor)
+
+Besides calling it as a Python package, this toolkit is packaged as an AI skill usable across multiple AI tools. The core is a `SKILL.md` with frontmatter; each vendor entry points to the same content:
+
+| Scenario | Entry | How |
+|---|---|---|
+| claude.ai / cowork | `skill.zip` | Download `tw-gov-overseas-trip-kit-skill-vX.Y.Z.zip` from [Releases](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/releases) and upload it |
+| Claude Code | `.claude-plugin/plugin.json` | Load as a plugin after cloning, or `git clone` into `~/.claude/skills/` |
+| Codex / Gemini CLIs | `AGENTS.md` / `GEMINI.md` | Clone into your working directory; the agent reads them (both point to `SKILL.md`) |
+| Any vendor | clone and go | Clone the repo; each entry file sits at the root |
+
+When using it, have the AI bring in your agency's data (`trip.json`) and fill `per_diem_base` from the current-year official per-diem table (the table is not bundled). For advanced usage see [SKILL.md](SKILL.md).
 
 ---
 
