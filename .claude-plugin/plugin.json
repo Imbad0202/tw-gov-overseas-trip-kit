@@ -1,7 +1,7 @@
 {
   "name": "tw-gov-overseas-trip-kit",
-  "description": "台灣公務機關出國報告文件產生工具。對齊行政院出國報告綜合處理要點附件一／二格式，援引國外出差旅費報支要點計算日支費。從一份 trip.json 產出出國報告書 docx、審核表 docx、經費規劃表 xlsx、行前手冊 html（可選、可印 PDF）。",
-  "version": "1.2.0",
+  "description": "台灣公務機關出國報告文件產生工具。對齊行政院出國報告綜合處理要點附件一／二格式，援引國外出差旅費報支要點計算日支費。從一份 trip.json 產出出國報告書 docx、審核表 docx、經費規劃表 xlsx、行前手冊 html（可選、可印 PDF）、航班查價對照表 html（可選、行前查價底稿、非訂票工具）。",
+  "version": "1.3.0",
   "license": "MIT",
   "repository": "https://github.com/Imbad0202/tw-gov-overseas-trip-kit",
   "skills": "./skills/"

@@ -114,6 +114,32 @@
       "minItems": 1,
       "uniqueItems": true,
       "items": {"type": "string", "minLength": 1}
+    },
+    "flights": {
+      "type": "array",
+      "description": "航班資訊（可選）。航班查價比較選定後寫入；省略不影響其他文件。多航段用同一 list。",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["leg_n", "date", "route", "departure_time", "arrival_time", "flight_no"],
+        "properties": {
+          "leg_n": {"type": "integer", "minimum": 1, "description": "航段序號"},
+          "date": {"type": "string", "format": "date"},
+          "route": {"type": "string", "minLength": 1, "description": "e.g. 城市A(AAA)→城市B(BBB)"},
+          "departure_time": {"type": "string", "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"},
+          "departure_time_next_day": {"type": "boolean", "default": false, "description": "+1 標記。轉機次日才出發 e.g. 08:00+1（對稱 arrival_time_next_day）"},
+          "arrival_time": {"type": "string", "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"},
+          "arrival_time_next_day": {"type": "boolean", "default": false, "description": "+1 標記。e.g. 21:55→07:25+1"},
+          "duration": {"type": "string", "description": "e.g. 5h 20m"},
+          "terminal_from": {"type": "string"},
+          "terminal_to": {"type": "string"},
+          "flight_no": {"type": "string", "minLength": 1, "description": "e.g. ZZ123"},
+          "aircraft": {"type": "string", "description": "e.g. Boeing 787-9"},
+          "is_layover": {"type": "boolean", "default": false, "description": "標記為轉機段。若 true 通常下一段為轉機後出發。"},
+          "layover_hotel": {"type": "string", "description": "轉機過夜住宿（含網址）。is_layover=true 時填。"},
+          "source": {"type": "string", "enum": ["searched", "ocr"], "description": "資料來源。searched=航班查價選定寫入；ocr=從素材抽取。缺席視為既有。"}
+        }
+      }
     }
   }
 }

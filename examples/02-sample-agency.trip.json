@@ -209,5 +209,28 @@
     "行動通訊：建議出發前向電信業者申請國際漫遊或於機場購買當地 SIM 卡，以確保境外聯絡暢通。",
     "健康安全：請攜帶常備藥品；若有特殊醫療需求，出發前請告知承辦科並備妥英文醫療文件。",
     "機密文件管控：公務攜出文件依機密等級妥善保管，禁止在公共場所討論或使用未加密設備開啟機密檔案。"
+  ],
+  "flights": [
+    {
+      "leg_n": 1,
+      "date": "2027-09-01",
+      "route": "城市A(AAA)→城市B(BBB)",
+      "departure_time": "08:50",
+      "arrival_time": "13:40",
+      "flight_no": "ZZ123",
+      "aircraft": "Boeing 787-9",
+      "is_layover": false,
+      "source": "searched"
+    },
+    {
+      "leg_n": 2,
+      "date": "2027-09-01",
+      "route": "城市B(BBB)→城市C(CCC)",
+      "departure_time": "16:10",
+      "arrival_time": "18:30",
+      "flight_no": "ZZ456",
+      "is_layover": true,
+      "source": "searched"
+    }
   ]
 }

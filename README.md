@@ -1,6 +1,6 @@
 # tw-gov-overseas-trip-kit
 
-[![Version](https://img.shields.io/badge/version-v1.2.0-blue)](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/releases)
+[![Version](https://img.shields.io/badge/version-v1.3.0-blue)](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Sponsor](https://img.shields.io/badge/sponsor-Buy%20Me%20a%20Coffee-orange?logo=buy-me-a-coffee)](https://buymeacoffee.com/crucify020v)
 
@@ -28,6 +28,7 @@
 - **出國報告渲染**：DOCX（Word 可編輯，附件一格式）出國報告書與附件二審核表
 - **行前手冊**（可選）：資料驅動 HTML（逐日議程／住宿／緊急聯絡／注意事項，皆選填），可瀏覽器開啟或 `cmd+P` 列印 PDF
 - **財務規劃表**：Excel 格式旅費規劃表（對應旅費報告表，非附件二）；審核表（附件二格式）另由 DOCX 渲染產出
+- **航班查價比較**（可選）：行前查價底稿——把航班候選依「休息時間 > 轉機/候機 > 行李直掛 > 票價」相對排序，產 HTML 對照表供選擇核定。只排序不顯分數、附票務代理免責；定位為比較底稿、非訂票工具，選定後可寫入 `flights[]`（不連動核銷）
 - **資料驗證**：schema 驗證必填欄位、agency required 欄位；摘要字數 200–300 中文字、禁交占位符
 
 ---
