@@ -6,6 +6,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.3.0] — 2026-06-27
+
+### 新增
+
+- **航班查價比較**（可選 deliverable）：行前準備階段的查價底稿。新增 `calc/flight_rank.py`（純函式：候選正規化、相對排序、版面判定、摘要列）與 `render/render_flight_options.py`（HTML 對照表 renderer，寫檔簽名對齊既有 render 模組）。排序依「尊重休息時間 > 轉機/候機越短 > 行李盡量直掛 > 票價」相對偏好優先序；休息時間=三條可計算規則（出發 buffer 避凌晨、避凌晨抵達、時差窗口）。對照表只排順序、不顯分數/名次（避免假精確計分），附票務代理免責、跨日 `+1` 標記、source_url scheme allowlist 防 XSS。定位為比較底稿、非訂票工具，**不連動核銷**——選定後可選擇性寫入 `flights[]`。
+- **schema 新增 optional `flights[]`**：航段資訊欄位（leg_n／date／route／departure_time／arrival_time／flight_no 等），含 `source` enum（searched／ocr）區分查價選定與素材抽取。不列入 required、缺席不影響其他文件，無 migration。範例檔 `02-sample-agency.trip.json` 加 city-neutral 航班示例。
+
+### 變更
+
+- **SKILL.md／README／plugin.json**：輸出文件由四種擴為五種，補航班查價說明段與觸發詞（航班查價／航班比價／班機比較）。
+
+---
+
 ## [1.2.0] — 2026-06-25
 
 ### 新增
