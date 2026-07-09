@@ -21,3 +21,6 @@ __pycache__/
 .venv/
 .gstack/
 dist/
+
+# 本機開發指引（給本機 AI 開發用，不進對外 repo）
+CLAUDE.md
