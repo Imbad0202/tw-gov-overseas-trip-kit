@@ -1,0 +1,61 @@
+{
+  "title": "示範航班比較（合成資料，非查價結果）",
+  "first_duty_local": "09:00",
+  "tz_diff_hours": 1,
+  "candidates": [
+    {
+      "operating_carrier": "示範航空",
+      "flight_date": "2027-09-01",
+      "cabin": "economy",
+      "price_twd": 12000,
+      "total_duration": "3h 30m",
+      "pros": [
+        "白天抵達、直飛"
+      ],
+      "cons": [
+        "僅為合成票價"
+      ],
+      "decision_note": "請先查實際可售班次、行李額度與退改票條件。",
+      "legs": [
+        {
+          "flight_no": "XX901",
+          "route": "台北→曼谷",
+          "dep_time": "09:45",
+          "arr_time": "12:15",
+          "is_layover": false
+        }
+      ]
+    },
+    {
+      "operating_carrier": "示範轉機航空",
+      "flight_date": "2027-09-01",
+      "cabin": "economy",
+      "price_twd": 10000,
+      "pros": [
+        "合成票價較低"
+      ],
+      "cons": [
+        "需轉機過夜、行李未確認"
+      ],
+      "decision_note": "請確認轉機簽證、跨航廈動線、過夜住宿與行李重掛。",
+      "legs": [
+        {
+          "flight_no": "YY101",
+          "route": "出發地→轉機地",
+          "dep_time": "21:00",
+          "arr_time": "23:00"
+        },
+        {
+          "flight_no": "YY102",
+          "route": "轉機地→目的地",
+          "dep_time": "08:00+1",
+          "arr_time": "10:00+1",
+          "is_layover": true,
+          "overnight": true,
+          "layover_minutes": 540,
+          "baggage_through": null
+        }
+      ]
+    }
+  ]
+}

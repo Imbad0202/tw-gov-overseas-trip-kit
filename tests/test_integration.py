@@ -23,8 +23,6 @@ def _load(name: str) -> dict:
 def test_full_pipeline(tmp_path):
     """End-to-end: sample agency data -> report.docx, review.docx, finance.xlsx, pre_trip.html."""
     trip = _load("02-sample-agency.trip.json")
-    # Sample summary is 150 chars; validator requires 200-300 Chinese chars.
-    trip["summary"] = "本" * 250
 
     fin = _load("02-sample-agency.trip-finance.json")
 
@@ -48,7 +46,6 @@ def test_report_docx_contains_key_fields(tmp_path):
     from docx import Document
 
     trip = _load("02-sample-agency.trip.json")
-    trip["summary"] = "本" * 250
 
     out = tmp_path / "report.docx"
     render_report_docx(trip, str(out))
@@ -68,7 +65,6 @@ def test_review_table_docx_exists(tmp_path):
     from render.render_docx import REVIEW_ITEMS
 
     trip = _load("02-sample-agency.trip.json")
-    trip["summary"] = "本" * 250
 
     out = tmp_path / "review.docx"
     render_review_table_docx(trip, str(out))
@@ -96,7 +92,6 @@ def test_finance_xlsx_exists(tmp_path):
 def test_html_pre_trip_contains_trip_info(tmp_path):
     """出發前 HTML 應包含行程基本資訊."""
     trip = _load("02-sample-agency.trip.json")
-    trip["summary"] = "本" * 250
 
     out = tmp_path / "pre_trip.html"
     render_html(trip, str(out))

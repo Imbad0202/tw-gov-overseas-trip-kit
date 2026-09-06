@@ -108,6 +108,7 @@ def _candidate_blocks(candidates, advisories_by_candidate):
         else:
             provenance = "來源未確認、僅參考"
         out += (f"<h2>選項 {label}</h2>"
+                f"<p>執飛航空：{_esc(c.get('operating_carrier', '待補'))}｜出發日：{_esc(c.get('flight_date', '待補'))}</p>"
                 f"<p><strong>艙等：</strong>{_esc(cabin_label)}</p>"
                 f"{legs_block}"
                 f"<p><span class='pros'>優：</span>{pros}　"

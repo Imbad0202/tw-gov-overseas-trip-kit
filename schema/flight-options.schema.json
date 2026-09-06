@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "flight-options CLI input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "candidates"
+  ],
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "first_duty_local": {
+      "type": "string",
+      "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+    },
+    "tz_diff_hours": {
+      "type": "number",
+      "minimum": -24,
+      "maximum": 24
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operating_carrier": {
+            "type": "string"
+          },
+          "marketing_carrier": {
+            "type": "string"
+          },
+          "source_url": {
+            "type": "string"
+          },
+          "cabin": {
+            "type": "string"
+          },
+          "total_duration": {
+            "type": "string"
+          },
+          "decision_note": {
+            "type": "string"
+          },
+          "flight_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "queried_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "price_twd": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "minimum": 0,
+            "pattern": "^[0-9]+$"
+          },
+          "transfers": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ],
+            "minimum": 0,
+            "pattern": "^[0-9]+$"
+          },
+          "pros": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "legs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "dep_time": {
+                  "type": "string"
+                },
+                "arr_time": {
+                  "type": "string"
+                },
+                "flight_no": {
+                  "type": "string"
+                },
+                "route": {
+                  "type": "string"
+                },
+                "dep_tz": {
+                  "type": "string"
+                },
+                "arr_tz": {
+                  "type": "string"
+                },
+                "dep_next_day": {
+                  "type": "boolean"
+                },
+                "arr_next_day": {
+                  "type": "boolean"
+                },
+                "is_layover": {
+                  "type": "boolean"
+                },
+                "overnight": {
+                  "type": "boolean"
+                },
+                "baggage_through": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "layover_minutes": {
+                  "type": [
+                    "integer",
+                    "string",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "pattern": "^[0-9]+$"
+                },
+                "duration_min": {
+                  "type": [
+                    "integer",
+                    "string",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "pattern": "^[0-9]+$"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -5,7 +5,7 @@ def test_full_day_normal():
     assert daily_amount(300, is_return_day=False, host_provided="none", meals_not_provided=[]) == 300
 
 def test_return_day_30pct():
-    # 返國/歇夜當日 = 30%（第九點末）
+    # 返國當日 = 30%（機上歇夜使用其他旗標）
     assert daily_amount(300, is_return_day=True, host_provided="none", meals_not_provided=[]) == 90
 
 def test_board_and_lodging_topup_to_10pct():
@@ -82,7 +82,7 @@ def test_manual_items_included():
 
 def test_in_transit_lodging_not_return_day():
     # B-6：機上歇夜（非返國）走供宿不供膳 lodging_only，膳食20%+零用補足10%=30%，非返國日 30%
-    # 兩者在曼谷 284 下數字巧合都 0.30，但組成不同、且機上歇夜可因供餐再補 → 用 lodging_only 才正確
+    # 兩者在曼谷 284 下數字巧合都 0.30，但組成不同、機上歇夜仍須查明供膳情形 → 用 lodging_only 才正確
     assert daily_amount(284, is_return_day=False, host_provided="lodging_only",
                         meals_not_provided=[]) == 284 * 0.30   # 膳食20%+零用10%
     # 返國當日才用 is_return_day

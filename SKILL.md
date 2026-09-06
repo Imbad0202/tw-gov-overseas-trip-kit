@@ -1,6 +1,6 @@
 ---
 name: tw-gov-overseas-trip-kit
-version: 1.4.0
+version: 1.5.0
 description: >
   台灣公務機關出國報告文件產生工具。對齊行政院出國報告綜合處理要點附件一／二格式，
   援引國外出差旅費報支要點（114.05.13）計算日支費。從一份 trip.json 產出五種輸出：
@@ -14,9 +14,27 @@ license: MIT
 
 # SKILL.md — tw-gov-overseas-trip-kit 進階用法
 
-> **版本鎖定提醒**：本工具的計算規則對齊「國外出差旅費報支要點」114.05.13 修正版。
+> **版本鎖定提醒**：本工具的計算規則對齊「國外出差旅費報支要點」114.05.13 修正、115.01.01 生效版本。
 > 日支數額表（生活費日支數額表）**不內建於工具**，須由使用者帶入當年度官方版本。
 > 詳見本文〈日支基準額填值流程〉一節及 [DISCLAIMER.md](DISCLAIMER.md)。
+
+---
+
+## 建議先用指令入口
+
+安裝 `python -m pip install -e .` 後，不需自行撰寫 Python：
+
+```bash
+python -m tripkit init --directory data/my-trip
+python -m tripkit validate --trip data/my-trip/trip.json --finance data/my-trip/finance.json
+python -m tripkit render --trip data/my-trip/trip.json --finance data/my-trip/finance.json --out output/my-trip
+```
+
+預設依輸入產審核表、行前手冊與美元經費表。報告請明示 `--outputs report review finance handbook`，另需 `summary` 及 `report_content` 三章段落；只有骨架時加 `--allow-incomplete-report`（摘要仍檢核）。既有檔案需 `--force` 才覆寫。
+
+`tripkit flights --input data/my-trip/flight-options.json` 可產航班比較。候選使用獨立 JSON（`schema/flight-options.schema.json`），不入 trip.json、不連動核銷。
+
+操作與錯誤處理見 [README.md](README.md)，完整情境與人工界線見 [docs/情境覆蓋表.md](docs/情境覆蓋表.md)。一份財務資料為一人一趟，經費表只收美元，不能直接當臺幣核銷表。
 
 ---
 
@@ -50,7 +68,7 @@ license: MIT
 報告書 docx 與審核表 docx 讀取 `schema/trip.schema.json` 格式的資料；
 經費規劃表讀取 `schema/trip-finance.schema.json` 格式的資料；
 行前手冊 HTML 讀取 `schema/trip.schema.json` 格式的資料；
-航班查價對照表讀取候選比較資料（in-memory dict，非 trip.json）。
+航班查價對照表讀取候選比較資料（dict，非 trip.json）；CLI 另接受獨立候選 JSON。
 
 ---
 
@@ -148,7 +166,7 @@ schema/trip-finance.schema.json  ← 經費規劃表
 
 ## 充實報告本文（目的／過程／心得及建議）
 
-**重要：本工具產出的出國報告書，本文三章節（壹目的／貳過程／參心得及建議）是「標題＋灰色撰寫提示」的骨架，不是完成的內容。** 只填封面欄位與摘要、本文留空，產出的是空殼報告，不符合行政院出國報告要點「本文須具備目的、過程、心得及建議」的要求。
+**重要：本工具產出的出國報告書，本文三章節（壹目的／貳過程／參心得及建議）可從 `report_content` 的 `purpose`、`process`、`insights_and_recommendations` 段落字串陣列帶入；未填章節才保留「標題＋灰色撰寫提示」骨架，不是完成的內容。** 只填封面欄位與摘要、本文留空，產出的是空殼報告，不符合行政院出國報告要點「本文須具備目的、過程、心得及建議」的要求。
 
 協助使用者產出報告時，**請主動引導使用者提供出差實況素材來充實本文**，而非只填基本欄位就交件：
 
@@ -224,7 +242,7 @@ render_review_table_docx(trip, "review_table.docx")
 render_finance_xlsx(fin, "finance.xlsx")
 ```
 
-產出後，`report.docx` 在 Word 補填壹目的/貳過程/參心得本文，再轉 PDF 送核。
+產出後，`report.docx` 可由 `report_content` 帶入本文；未填部分在 Word 補齊，核閱後再轉 PDF 送核。
 
 ---
 
@@ -266,7 +284,7 @@ Claude Code 會嘗試取得當年度數額，填入後請確認：
 |---|---|
 | 同日跨多地區 | 填**當日留宿地**之數額（報支要點 R4） |
 | 城市未列於數額表 | 填該國「其他」欄數額（R5） |
-| 國家未列於數額表 | 填地理或政治上最近國數額（R5） |
+| 國家未列於數額表 | 填距離最近國家「其他」數額（數額表附註） |
 | 季節性城市（分高/低峰區間） | 填出差**當日**所屬區間之數額 |
 
 ### 欄位補充說明
@@ -285,7 +303,7 @@ Claude Code 會嘗試取得當年度數額，填入後請確認：
 | 機票（艙等） | 艙等依職等判定（要點另規，工具不判）。機票金額由承辦填實際票價或上限額。 |
 | 覈實住宿費 | 住宿費覈實報支情形（適用特定條件）由承辦填實際金額。 |
 | 禮品及雜費 | 依機關規定，由承辦填許可金額。 |
-| 匯率調整 | 若以新台幣核銷，匯率換算由承辦依財政部公告匯率計算後填入。 |
+| 匯率調整 | 本表僅收美元規劃額；原幣、匯率、日期與依據記於 note。新臺幣核銷依要點第19點及機關規定另表辦理，不可把臺幣額填入 amount_usd。 |
 
 填法：
 
@@ -316,6 +334,16 @@ Claude Code 會嘗試取得當年度數額，填入後請確認：
 
 以下情形**不在計算器自動處理範圍**，需承辦人工判斷：
 
+**私人日、核准日數與長駐模型**
+
+`reimbursable: false` 與 `exclusion_reason` 可明示排除私人／不報支日；請保留原日期與基準額。`approved_days` 從 `approved_start_date`（未填則首筆日期）起算日曆日數，未填不限制。`approved_extension: true` 只反映已核准結果，不會覆蓋明示排除。日期須遞增、每日一筆；同趟跨多地區仍不可同日多列日支。
+
+長駐採既有 30/90 日分界，**不是曆月判定器**。`day_index_same_place` 與豁免須人工確認；與返國日、供餐、津貼併用需另覆核，不以「符合精神」取代法規認定。
+
+**覈實住宿與人工項目避免重複**
+
+自動日支已有住宿部分，人工項目應填淨調整，或明示排除該日日支後人工列完整核定額，不得再加一次全額住宿。僅現金津貼、未供膳宿等未涵蓋組合須另行認定。
+
 **第十點 — 駐外人員**
 
 本工具適用一般短期出差人員。駐外人員（常駐境外機構人員）依要點第十點另有規定，本工具不涵蓋，不得直接套用。
@@ -326,7 +354,7 @@ Claude Code 會嘗試取得當年度數額，填入後請確認：
 
 **第二十三點 — 跨修法分段**
 
-出差期間橫跨要點修正前後（數額表版本更替），計算器不自動分段套用不同版本數額，由承辦手動分段計算後分別填入各 `segment.per_diem_base`，或以 `manual_items` 補差額。
+出差期間橫跨要點修正前後（數額表版本更替），計算器不自動分段套用不同版本數額，若僅數額表變更，可逐日填適用的 `segment.per_diem_base`；若計算規則本身改變，須分版本另算，不能僅換基準額。`manual_items` 僅承接已核定的美元淨調整。
 
 **機上/交通工具歇夜（B-6）**
 
@@ -380,7 +408,7 @@ libreoffice --headless --convert-to pdf review_table.docx
 
 | 法規 | 本工具對齊版本 |
 |---|---|
-| 國外出差旅費報支要點 | 114.05.13 修正（計算規則） |
+| 國外出差旅費報支要點 | 114.05.13 修正、115.01.01 生效（計算規則） |
 | 行政院出國報告綜合處理要點 | 107.06.20 附件一/二格式 |
 | 生活費日支數額表 | **不內建**，由使用者帶入當年度版本 |
 

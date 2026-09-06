@@ -1,0 +1,90 @@
+{
+  "agency": {
+    "full_name": "○○部"
+  },
+  "per_diem_inputs": {
+    "segments": [
+      {
+        "date": "2027-09-01",
+        "per_diem_base": 100,
+        "country": "示範甲國",
+        "lodging_city": "示範甲城",
+        "rate_source": "合成試算值，非官方數額。",
+        "host_provided": "lodging_only",
+        "note": "機上歇夜（非返國日）；起飛地基準額須人工查填。"
+      },
+      {
+        "date": "2027-09-02",
+        "per_diem_base": 100,
+        "country": "示範甲國",
+        "lodging_city": "示範甲城",
+        "rate_source": "合成試算值，非官方數額。",
+        "host_provided": "board_and_lodging",
+        "cash_allowance_usd": 5,
+        "meals_not_provided": [
+          "dinner"
+        ]
+      },
+      {
+        "date": "2027-09-03",
+        "per_diem_base": 200,
+        "country": "示範乙國",
+        "lodging_city": "示範乙城",
+        "rate_source": "合成試算值，非官方數額。",
+        "note": "同日跨城市，以核對後當日留宿地基準額填一筆。"
+      },
+      {
+        "date": "2027-09-04",
+        "per_diem_base": 200,
+        "country": "示範乙國",
+        "lodging_city": "示範乙城",
+        "rate_source": "合成試算值，非官方數額。",
+        "reimbursable": false,
+        "exclusion_reason": "私人行程，不列日支"
+      },
+      {
+        "date": "2027-09-05",
+        "per_diem_base": 200,
+        "country": "示範乙國",
+        "lodging_city": "示範乙城",
+        "rate_source": "合成試算值，非官方數額。",
+        "note": "延留未核准，超出核准期間。"
+      },
+      {
+        "date": "2027-09-06",
+        "per_diem_base": 100,
+        "country": "示範乙國",
+        "lodging_city": "示範乙城",
+        "rate_source": "合成試算值，非官方數額。",
+        "approved_extension": true,
+        "note": "示範意外阻滯經核准；實際須保留證明及核准文件。"
+      },
+      {
+        "date": "2027-09-07",
+        "per_diem_base": 100,
+        "country": "示範乙國",
+        "lodging_city": "示範乙城",
+        "rate_source": "合成試算值，非官方數額。",
+        "approved_extension": true,
+        "is_return_day": true
+      }
+    ],
+    "approved_days": 4,
+    "manual_items": [
+      {
+        "label": "示範機票",
+        "amount_usd": 420,
+        "note": "合成票價，實際查填。"
+      },
+      {
+        "label": "示範保險費",
+        "amount_usd": 40
+      },
+      {
+        "label": "示範退款調整",
+        "amount_usd": -10,
+        "note": "示範退款，原列機票僅扣一次。"
+      }
+    ]
+  }
+}

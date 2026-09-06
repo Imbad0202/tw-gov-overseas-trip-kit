@@ -34,18 +34,55 @@
         "purpose_category": {"type": "string",
           "enum": ["考察", "進修", "研究", "實習", "視察", "訪問", "開會", "談判", "其他"],
           "description": "附件一出國類別"},
-        "country": {"type": "string"},
+        "country": {"type": "string", "minLength": 1},
         "city": {"type": "string", "description": "對應日支表城市；未列則用該國『其他』"},
         "start_date": {"type": "string", "format": "date"},
         "end_date": {"type": "string", "format": "date"},
         "organization": {"type": "string", "description": "境外主辦單位（與 agency 分離）"}
       }
     },
+    "report_title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "報告名稱（封面及審核表共用）"
+    },
+    "report_date": {
+      "type": "string",
+      "format": "date",
+      "description": "報告繳交日期"
+    },
+    "report_content": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "選填本文；每個欄位為段落字串陣列，未填章節保留撰寫提示。",
+      "properties": {
+        "purpose": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "process": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "insights_and_recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
     "summary": {"type": "string", "description": "附件一摘要，renderer 檢查 200-300 中文字"},
     "itinerary": {
       "type": "array",
       "description": "行前手冊（可選）逐日議程／行程表；空或省略則不渲染該區塊",
-      "minItems": 1,
       "uniqueItems": true,
       "items": {
         "type": "object",
@@ -75,7 +112,6 @@
     "lodging": {
       "type": "array",
       "description": "行前手冊（可選）住宿；多段行程可多筆，空或省略則不渲染",
-      "minItems": 1,
       "uniqueItems": true,
       "items": {
         "type": "object",
@@ -94,7 +130,6 @@
     "emergency_contacts": {
       "type": "array",
       "description": "行前手冊（可選）緊急聯絡，例如駐外館處、境外主辦、家屬；空或省略則不渲染",
-      "minItems": 1,
       "uniqueItems": true,
       "items": {
         "type": "object",
@@ -111,7 +146,6 @@
     "notes": {
       "type": "array",
       "description": "行前手冊（可選）注意事項清單；空或省略則不渲染",
-      "minItems": 1,
       "uniqueItems": true,
       "items": {"type": "string", "minLength": 1}
     },

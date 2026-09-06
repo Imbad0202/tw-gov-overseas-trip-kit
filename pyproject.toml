@@ -1,6 +1,6 @@
 [project]
 name = "tw-gov-overseas-trip-kit"
-version = "1.4.0"
+version = "1.5.0"
 description = "台灣公務機關出國報告文件產生工具，對齊行政院出國報告要點附件一/二"
 requires-python = ">=3.10"
 dependencies = ["python-docx>=1.1", "openpyxl>=3.1", "jsonschema>=4.20"]
@@ -8,8 +8,22 @@ dependencies = ["python-docx>=1.1", "openpyxl>=3.1", "jsonschema>=4.20"]
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
 
-# flat-layout 下明示要打包的 python package（calc/render 含 __init__.py）。
-# schema/（JSON）、skills/（skill 定義）、scripts/（工具腳本）非 import package、不打包。
-# 不明示則 setuptools 自動發現碰到多個 top-level 目錄會拒（CI pip install -e 失敗）。
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+tripkit = "tripkit.cli:main"
+
+# 同一份 schema / 合成範例供 repo 與安裝後的 CLI 使用，不複製維護。
 [tool.setuptools]
-packages = ["calc", "render"]
+packages = ["calc", "render", "tripkit", "tripkit.schemas", "tripkit.examples"]
+
+[tool.setuptools.package-dir]
+"tripkit.schemas" = "schema"
+"tripkit.examples" = "examples"
+
+[tool.setuptools.package-data]
+render = ["templates/*.html"]
+"tripkit.schemas" = ["*.json"]
+"tripkit.examples" = ["*.json"]

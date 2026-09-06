@@ -30,11 +30,12 @@ scan_files() {
   local pattern="$1"; shift
   local listcmd=("$@")
   [ -z "$pattern" ] && return 0
-  git -C "$REPO_ROOT" "${listcmd[@]}" "${TARGET_GLOBS[@]}" \
-    | while IFS= read -r rel; do
+  git -C "$REPO_ROOT" "${listcmd[@]}" -z -- "${TARGET_GLOBS[@]}" \
+    | while IFS= read -r -d '' rel; do
+        [ -f "$REPO_ROOT/$rel" ] || continue
         grep -In -E "$pattern" "$REPO_ROOT/$rel" \
           | grep -v 'SESSION_PATTERN=' | grep -v 'EXTRA_PATTERN=' \
-          | sed "s|^|$rel:|" || true
+          | while IFS= read -r hit; do printf '%s:%s\n' "$rel" "$hit"; done || true
       done
 }
 

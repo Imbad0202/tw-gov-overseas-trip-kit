@@ -1,6 +1,6 @@
 # tw-gov-overseas-trip-kit
 
-[![Version](https://img.shields.io/badge/version-v1.4.0-blue)](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/releases)
+[![Version](https://img.shields.io/badge/version-v1.5.0-blue)](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Sponsor](https://img.shields.io/badge/sponsor-Buy%20Me%20a%20Coffee-orange?logo=buy-me-a-coffee)](https://buymeacoffee.com/crucify020v)
 
@@ -15,7 +15,7 @@ Document generation toolkit for Taiwan government overseas trip reports, aligned
 | Regulation | Version | Notes |
 |---|---|---|
 | Executive Yuan Overseas Trip Report Processing Guidelines | Appendix I/II (2018-06-20) | Primary report format |
-| Overseas Travel Expense Reimbursement Rules | Amended 2025-05-13 (Order 1140101390) | Expense calculation rules |
+| Overseas Travel Expense Reimbursement Rules | Amended 2025-05-13, effective 2026-01-01 (Order 1140101390) | Expense calculation rules |
 | Daily Subsistence Allowance Table | Amended 2025-10-31, effective 2026-01-01 (Order 1140103430) | DSA base rates — **not built-in; user-supplied** |
 
 Full legal source list: [docs/sources/README.md](docs/sources/README.md)
@@ -40,7 +40,7 @@ This kit targets the **layer common to all agencies**: the Executive Yuan trip-r
 
 **Therefore**:
 
-- Most agencies' (including universities') trip reports and review forms inherit the Executive Yuan rules, so the output aligns closely; if your agency has a customized layout (logo, header, extra sign-off fields), add those on top of the generated DOCX.
+- The report format is a common reference; national colleges and universities with campus funds are excluded from the report guidelines’ definition of schools and must check their own applicable rules; if your agency has a customized layout (logo, header, extra sign-off fields), add those on top of the generated DOCX.
 - Per-diem calculation follows the reimbursement rules, but the **fixed layout of an expense report form** (transport schedule table, meals/lodging checkboxes, multi-stage sign-off) is usually agency-specific; the kit outputs a generic worksheet, not a specific agency's form.
 - **Pre-trip application / approval forms** (e.g. a campus-fund overseas plan form with principal investigator, unit review, head approval) are agency-specific administrative workflow documents and are **out of scope**.
 
@@ -48,36 +48,53 @@ In short: the kit provides the common base; the customization layer is left to e
 
 ---
 
-## Installation
+## Quick start
+
+Python 3.10+ is required. From the cloned repository:
 
 ```bash
-pip install -e ".[dev]"
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e .
+python -m tripkit init --directory data/my-trip
+python -m tripkit render --trip data/my-trip/trip.json --finance data/my-trip/finance.json --out output/my-trip
 ```
 
-Requires Python 3.10+.
+On Windows use `py -m venv .venv` and `.venv\Scripts\Activate.ps1`, or invoke `.venv\Scripts\python.exe` directly. Installed packages also work outside the checkout.
 
----
+The default outputs are a handbook, review form and USD planning sheet. Replace the synthetic agency, traveler, dates, itinerary and amounts before use. Example rates and flights are **not official rates or live quotes**. The `data/` and `output/` folders are ignored by Git.
 
-## Quick Start
+```bash
+# Validate both files, including dates and finance inputs
+python -m tripkit validate --trip data/my-trip/trip.json --finance data/my-trip/finance.json
 
-```python
-# Run from the project root directory (tw-gov-overseas-trip-kit/)
-import json, pathlib
-from jsonschema import validate
-from calc.per_diem import compute_trip_per_diem
-from render.render_html import render_html
-from render.render_finance_xlsx import render_finance_xlsx
+# Include the report, which requires a valid summary and all three body sections
+python -m tripkit render --trip data/my-trip/trip.json --finance data/my-trip/finance.json --outputs report review finance handbook --out output/full
 
-trip = json.loads(pathlib.Path("examples/02-sample-agency.trip.json").read_text(encoding="utf-8"))
-fin = json.loads(pathlib.Path("examples/02-sample-agency.trip-finance.json").read_text(encoding="utf-8"))
-result = compute_trip_per_diem(fin["per_diem_inputs"]["segments"],
-                               fin["per_diem_inputs"].get("manual_items"),
-                               approved_days=fin["per_diem_inputs"].get("approved_days"))
-render_html(trip, "pre_trip.html")
-render_finance_xlsx(fin, "finance.xlsx")
+# Compare candidates from a separate JSON file; does not search or book flights
+python -m tripkit flights --input data/my-trip/flight-options.json --out output/flights.html
 ```
 
-See `examples/` for synthetic sample data.
+Use `--outputs handbook` for a handbook alone. A report needs `summary` (200–300 Chinese characters) and paragraph arrays at `report_content.purpose`, `process`, and `insights_and_recommendations`. To intentionally generate an unfinished report skeleton, add `--allow-incomplete-report`; the summary is still checked. Review in Word and export ODF/PDF before submission.
+
+Existing files are protected unless `--force` is supplied. Validation errors show field paths and stop rendering before output is written. Every command supports `--help`. The shorter `tripkit` command is also installed.
+
+## Scenario coverage
+
+See the [coverage matrix](docs/情境覆蓋表.md) and [case guidance](docs/延返與個案指引.md) (Traditional Chinese). The toolkit covers one traveler and one trip per finance file:
+
+- Each dated segment represents one day; dates must be ordered and unique, including multi-city travel.
+- `reimbursable: false` plus `exclusion_reason` excludes private or non-claim days while retaining their dates and original rates.
+- `approved_days` counts calendar days from `approved_start_date` (the first segment by default), including missing days. Set the approval start explicitly for an early private departure. If omitted, it does not restrict reimbursement; approved extensions require an explicit flag.
+- Daily rates and `rate_source` are user-supplied. Meal provision and allowances must reflect actual arrangements.
+- Long stays retain the existing 30/90-day model; calendar-month boundaries and combinations need manual review.
+- `manual_items` contains USD planning amounts only. Currency conversion, actual lodging adjustments, group allocations, eligibility, advances and final TWD reimbursement remain manual.
+- Mainland China, Hong Kong and Macau require their separate official rate table. Resident staff and training/research subsidies may use different rules.
+- Flight ranking has clock times and +1 flags, not a full dated timezone model. Date-line and multi-day duty windows need manual review.
+
+The mixed synthetic example can be rendered with `--finance examples/04-mixed-scenarios.trip-finance.json`; its expected total is USD 823. Monetary accumulation uses decimal arithmetic. Excel preserves notes, rate sources and exclusion reasons, and is a generated snapshot: edit JSON and regenerate to update amounts.
+
+For development, install `python -m pip install -e ".[dev]"` and run `python -m pytest -q`. CI also builds a wheel and generates all five outputs outside the checkout.
 
 ---
 
@@ -94,7 +111,7 @@ Besides calling it as a Python package, this toolkit is packaged as an AI skill 
 
 When using it, have the AI bring in your agency's data (`trip.json`) and fill `per_diem_base` from the current-year official per-diem table (the table is not bundled). For advanced usage see [SKILL.md](SKILL.md).
 
-> **The report body must be filled in by you**: the three body sections of the trip report (Purpose / Process / Reflections & Recommendations) are generated as a "heading + writing prompt" skeleton, **not finished content**. Filling only the basic fields and summary yields a hollow report. Use your trip materials (meeting transcripts, notes, visit records) to flesh out the body. **This tool does not record or transcribe; you supply the materials.** If materials contain confidential or others' personal data, handle them per the Executive Yuan's generative-AI guidelines and your agency's rules (see [DISCLAIMER.md](DISCLAIMER.md)).
+> **The report body must be filled in by you**: the three body sections of the trip report (Purpose / Process / Reflections & Recommendations) can be supplied through `report_content`; missing sections remain a "heading + writing prompt" skeleton, **not finished content**. Filling only the basic fields and summary yields a hollow report. Use your trip materials (meeting transcripts, notes, visit records) to flesh out the body. **This tool does not record or transcribe; you supply the materials.** If materials contain confidential or others' personal data, handle them per the Executive Yuan's generative-AI guidelines and your agency's rules (see [DISCLAIMER.md](DISCLAIMER.md)).
 
 ---
 

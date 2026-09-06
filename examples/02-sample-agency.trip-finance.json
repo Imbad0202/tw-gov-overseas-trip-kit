@@ -11,33 +11,47 @@
         "date": "2027-09-01",
         "per_diem_base": 165,
         "lodging_city": "曼谷",
-        "country": "泰國"
+        "country": "泰國",
+        "rate_source": "合成試算值165美元，非2027年官方數額；實際使用須查當年度表替換。"
       },
       {
         "date": "2027-09-02",
         "per_diem_base": 165,
         "lodging_city": "曼谷",
         "country": "泰國",
-        "host_provided": "board_only"
+        "host_provided": "board_only",
+        "rate_source": "合成試算值165美元，非2027年官方數額；實際使用須查當年度表替換。",
+        "meals_not_provided": [
+          "breakfast",
+          "dinner"
+        ]
       },
       {
         "date": "2027-09-03",
         "per_diem_base": 165,
         "lodging_city": "曼谷",
-        "country": "泰國"
+        "country": "泰國",
+        "rate_source": "合成試算值165美元，非2027年官方數額；實際使用須查當年度表替換。",
+        "host_provided": "board_only",
+        "meals_not_provided": [
+          "breakfast",
+          "lunch"
+        ]
       },
       {
         "date": "2027-09-04",
         "per_diem_base": 165,
         "lodging_city": "曼谷",
-        "country": "泰國"
+        "country": "泰國",
+        "rate_source": "合成試算值165美元，非2027年官方數額；實際使用須查當年度表替換。"
       },
       {
         "date": "2027-09-05",
         "per_diem_base": 165,
         "lodging_city": "曼谷",
         "country": "泰國",
-        "is_return_day": true
+        "is_return_day": true,
+        "rate_source": "合成試算值165美元，非2027年官方數額；實際使用須查當年度表替換。"
       }
     ],
     "approved_days": 5,
@@ -50,8 +64,17 @@
     ]
   },
   "signatures": [
-    {"role": "出國人", "name": ""},
-    {"role": "單位主管", "name": ""},
-    {"role": "機關首長", "name": ""}
+    {
+      "role": "出國人",
+      "name": ""
+    },
+    {
+      "role": "單位主管",
+      "name": ""
+    },
+    {
+      "role": "機關首長",
+      "name": ""
+    }
   ]
 }

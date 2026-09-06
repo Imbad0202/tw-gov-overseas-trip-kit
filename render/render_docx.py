@@ -35,13 +35,13 @@ def render_review_table_docx(data: dict, out_path: str) -> None:
     header_table = doc.add_table(rows=7, cols=2)
     header_table.style = "Table Grid"
     header_rows = [
-        ("報告名稱", ""),
+        ("報告名稱", data.get("report_title", "")),
         ("出國人姓名", traveler.get("name", "")),
         ("職稱", traveler.get("title", "")),
         ("服務單位", agency.get("full_name", "")),
         ("出國類別", trip.get("purpose_category", "")),
         ("出國期間", f"{trip.get('start_date', '')}～{trip.get('end_date', '')}".strip("～")),
-        ("報告繳交日期", ""),
+        ("報告繳交日期", data.get("report_date", "")),
     ]
     for idx, (label, val) in enumerate(header_rows):
         row_cells = header_table.rows[idx].cells
@@ -89,6 +89,10 @@ def render_report_docx(data: dict, out_path: str) -> None:
     set_run_font(p1.add_run(f"出國類別：{trip['purpose_category']}"), size_pt=20, bold=True)
     p2 = doc.add_paragraph(); p2.alignment = WD_ALIGN_PARAGRAPH.CENTER
     set_run_font(p2.add_run(f"出國報告（出國類別：{trip['purpose_category']}）"), size_pt=26, bold=True)
+    if data.get("report_title"):
+        title = doc.add_paragraph()
+        title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        set_run_font(title.add_run(data["report_title"]), size_pt=20, bold=True)
     # 封面欄位（含單位）
     for label, val in [("服務機關", agency["full_name"]), ("單位", agency.get("unit", "")),
                        ("職稱姓名", f"{data['traveler'].get('title', '')} {data['traveler']['name']}"),
@@ -107,8 +111,15 @@ def render_report_docx(data: dict, out_path: str) -> None:
         "貳、過程": "（撰寫提示：依出差逐字稿／會議筆記／觀察記錄補寫本段，使內容完整翔實，非僅填基本資訊。涉及機密或他人個資之素材，請依貴機關規定及生成式 AI 使用規範處理。完成後請刪除本行。）",
         "參、心得及建議": "（撰寫提示：依出差所得補寫心得，建議事項請逐項分列；倘無建議請寫「無」。完成後請刪除本行。）",
     }
-    for head in ("壹、目的", "貳、過程", "參、心得及建議"):
+    for head, key in (("壹、目的", "purpose"), ("貳、過程", "process"),
+                      ("參、心得及建議", "insights_and_recommendations")):
         ph = doc.add_paragraph(); set_run_font(ph.add_run(head), size_pt=12, bold=True)
+        paragraphs = data.get("report_content", {}).get(key, [])
+        if paragraphs:
+            for text in paragraphs:
+                pb = doc.add_paragraph()
+                set_run_font(pb.add_run(text), size_pt=12)
+            continue
         pb = doc.add_paragraph()
         hint_run = pb.add_run(_BODY_HINTS[head])
         set_run_font(hint_run, size_pt=12)
