@@ -1,6 +1,6 @@
 # tw-gov-overseas-trip-kit
 
-[![Version](https://img.shields.io/badge/version-v1.6.0-blue)](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/releases)
+[![Version](https://img.shields.io/badge/version-v1.6.1-blue)](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Sponsor](https://img.shields.io/badge/sponsor-Buy%20Me%20a%20Coffee-orange?logo=buy-me-a-coffee)](https://buymeacoffee.com/crucify020v)
 
@@ -12,9 +12,10 @@
 
 ---
 
-## What's new in v1.6.0
+## What's new in v1.6.1
 
-- 新增[解釋彙編逐案索引](docs/解釋彙編逐案索引.md)：主計總處 107.4 修編《解釋彙編》全部 93 案，附函釋文號、要旨與現行 114.05.13 條文差異。
+- README 補「Last Updated」與本段；版本一致性檢查新增六處版本號、Last Updated 日期、What's new 段三條，CI 每次 push 都驗。
+- v1.6.0 新增[解釋彙編逐案索引](docs/解釋彙編逐案索引.md)：主計總處 107.4 修編《解釋彙編》全部 93 案，附函釋文號、要旨與現行 114.05.13 條文差異。
 - 差異標註區分「彙編編修時已加註」與「114.05.13 後才改」兩段，避免把舊比例當現行規定。
 - 法源清單改列主計總處全文 PDF 網址；索引不放 PDF、不覆蓋現行條文。完整紀錄見 [CHANGELOG.md](CHANGELOG.md)。
 
@@ -162,7 +163,7 @@ python -m tripkit flights --input data/my-trip/flight-options.json --out output/
 python -m pip install -e ".[dev]"
 python -m pytest -q
 python -m pip wheel . --no-deps --wheel-dir dist
-python scripts/check_wheel.py dist/tw_gov_overseas_trip_kit-1.6.0-py3-none-any.whl
+python scripts/check_wheel.py dist/tw_gov_overseas_trip_kit-1.6.1-py3-none-any.whl
 ```
 
 CI 在 Python 3.10 / 3.13 跑測試，另驗證安裝 wheel 後在專案外產出全部五種文件，避免漏打包樣板或範例。

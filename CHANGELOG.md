@@ -6,6 +6,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.6.1] — 2026-09-15
+
+### 新增
+- README 與 README_EN 補「Last Updated」與「What's new in v<版本>」段，發版文件對齊紀律第 2、3 條就位。
+- `scripts/check_consistency.py` 新增三條檢查：SKILL.md／pyproject.toml／plugin.json／兩份 README badge／CHANGELOG 最新 entry 六處版本號互相一致；兩份 README 的 Last Updated 等於 CHANGELOG 最新 entry 日期；兩份 README 含當前版本的 What's new 段。CI 的 consistency workflow 每次 push 都跑。
+
 ## [1.6.0] — 2026-09-15
 
 ### 新增
