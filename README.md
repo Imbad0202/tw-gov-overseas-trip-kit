@@ -4,11 +4,19 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Sponsor](https://img.shields.io/badge/sponsor-Buy%20Me%20a%20Coffee-orange?logo=buy-me-a-coffee)](https://buymeacoffee.com/crucify020v)
 
+**Last Updated**: 2026-09-15
+
 台灣公務機關出國報告文件產生工具，對齊**行政院出國報告綜合處理要點附件一／二**格式，並援引**國外出差旅費報支要點**（114.05.13 修正、115.01.01 生效）計算規則。
 
 > English version: [README_EN.md](README_EN.md)
 
 ---
+
+## What's new in v1.6.0
+
+- 新增[解釋彙編逐案索引](docs/解釋彙編逐案索引.md)：主計總處 107.4 修編《解釋彙編》全部 93 案，附函釋文號、要旨與現行 114.05.13 條文差異。
+- 差異標註區分「彙編編修時已加註」與「114.05.13 後才改」兩段，避免把舊比例當現行規定。
+- 法源清單改列主計總處全文 PDF 網址；索引不放 PDF、不覆蓋現行條文。完整紀錄見 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 三步跑出第一份文件
 

@@ -4,11 +4,19 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Sponsor](https://img.shields.io/badge/sponsor-Buy%20Me%20a%20Coffee-orange?logo=buy-me-a-coffee)](https://buymeacoffee.com/crucify020v)
 
+**Last Updated**: 2026-09-15
+
 Document generation toolkit for Taiwan government overseas trip reports, aligned with the **Executive Yuan Overseas Trip Report Processing Guidelines (Appendix I/II)** format, and referencing the **Overseas Travel Expense Reimbursement Rules** (amended 2025-05-13).
 
 > 中文版：[README.md](README.md)
 
 ---
+
+## What's new in v1.6.0
+
+- New [case-by-case index of official interpretations](docs/解釋彙編逐案索引.md): all 93 cases from the DGBAS interpretation compendium (April 2018 edition) with letter numbers, gist and the differences against the current 2025-05-13 rules.
+- Differences are split into "already annotated in the compendium" and "changed after 2025-05-13", so old ratios are not mistaken for current rules.
+- The legal source list now links to the DGBAS full-text PDF; the index does not ship the PDF and never overrides the current rules. Full record in [CHANGELOG.md](CHANGELOG.md).
 
 ## Format Sources
 
