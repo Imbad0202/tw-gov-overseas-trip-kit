@@ -1,6 +1,6 @@
 # tw-gov-overseas-trip-kit
 
-[![Version](https://img.shields.io/badge/version-v1.5.0-blue)](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/releases)
+[![Version](https://img.shields.io/badge/version-v1.6.0-blue)](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Sponsor](https://img.shields.io/badge/sponsor-Buy%20Me%20a%20Coffee-orange?logo=buy-me-a-coffee)](https://buymeacoffee.com/crucify020v)
 
@@ -81,7 +81,7 @@ Existing files are protected unless `--force` is supplied. Validation errors sho
 
 ## Scenario coverage
 
-See the [coverage matrix](docs/情境覆蓋表.md) and [case guidance](docs/延返與個案指引.md) (Traditional Chinese). The toolkit covers one traveler and one trip per finance file:
+See the [coverage matrix](docs/情境覆蓋表.md), [case guidance](docs/延返與個案指引.md) and the [case-by-case index of official interpretations](docs/解釋彙編逐案索引.md) (Traditional Chinese). The toolkit covers one traveler and one trip per finance file:
 
 - Each dated segment represents one day; dates must be ordered and unique, including multi-city travel.
 - `reimbursable: false` plus `exclusion_reason` excludes private or non-claim days while retaining their dates and original rates.

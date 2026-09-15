@@ -1,6 +1,6 @@
 # tw-gov-overseas-trip-kit
 
-[![Version](https://img.shields.io/badge/version-v1.5.0-blue)](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/releases)
+[![Version](https://img.shields.io/badge/version-v1.6.0-blue)](https://github.com/Imbad0202/tw-gov-overseas-trip-kit/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Sponsor](https://img.shields.io/badge/sponsor-Buy%20Me%20a%20Coffee-orange?logo=buy-me-a-coffee)](https://buymeacoffee.com/crucify020v)
 
@@ -154,7 +154,7 @@ python -m tripkit flights --input data/my-trip/flight-options.json --out output/
 python -m pip install -e ".[dev]"
 python -m pytest -q
 python -m pip wheel . --no-deps --wheel-dir dist
-python scripts/check_wheel.py dist/tw_gov_overseas_trip_kit-1.5.0-py3-none-any.whl
+python scripts/check_wheel.py dist/tw_gov_overseas_trip_kit-1.6.0-py3-none-any.whl
 ```
 
 CI 在 Python 3.10 / 3.13 跑測試，另驗證安裝 wheel 後在專案外產出全部五種文件，避免漏打包樣板或範例。
