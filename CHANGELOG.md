@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [Unreleased]
+
+### 修正
+- SKILL.md「取得方式 B」補一句：WebFetch 取不到主計總處數額表，或取得了但無法確認版本年度涵蓋出差日期時，分別照實回報，請使用者改走方式 A，`per_diem_base` 先留空，不以記憶或推估的數字填入（對應 Opus 5.5 System Card §6.2.2：任務做不到時模型傾向繞路交差）。
+
 ## [1.6.1] — 2026-09-15
 
 ### 新增
