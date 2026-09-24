@@ -174,7 +174,7 @@ schema/trip-finance.schema.json  ← 經費規劃表
 - **目的**：行前計畫、邀請函、簽辦核准文件、出國計畫表所載目的。
 - **心得及建議**：使用者的觀察、收穫、可供機關研辦的具體建議（逐項分列；倘無建議寫「無」）。
 
-引導方式範例：「為了讓報告本文完整，請提供你這趟出差的會議逐字稿或筆記、參訪記錄、以及你的心得與建議，我會據此撰寫『過程』與『心得及建議』章節。若只填基本資訊，本文會是空白骨架。」
+引導時依本文還缺哪幾章，向使用者列出上面對應的素材，並說明只填基本資訊時本文會是空白骨架。
 
 **本工具不提供逐字稿錄製／轉錄功能**——逐字稿／筆記由使用者自行準備並提供。
 
@@ -186,16 +186,17 @@ schema/trip-finance.schema.json  ← 經費規劃表
 
 工具不附含任何真實機關資料。啟動時請依以下步驟帶入貴機關資料：
 
-**步驟一：複製合成範例作為起點**
+**步驟一：建立合成範例作為起點**
 
 ```bash
-cp examples/02-sample-agency.trip.json        my-agency.trip.json
-cp examples/02-sample-agency.trip-finance.json my-agency.trip-finance.json
+python -m tripkit init --directory data/my-agency
 ```
+
+產生 `trip.json`、`finance.json`、`flight-options.json`。本 repo 的 `.gitignore` 已排除 `data/`；在其他資料夾執行時，請自行確認這些檔案不會進 Git。
 
 **步驟二：替換機關欄位**
 
-開啟 `my-agency.trip.json`，將 `agency` 欄位的 `"○○部"` 改為貴機關全銜，`unit`、`head_title` 填實際值。`traveler` 填出差人員職稱與姓名。
+開啟 `data/my-agency/trip.json`，將 `agency` 欄位的 `"○○部"` 改為貴機關全銜，`unit`、`head_title` 填實際值。`traveler` 填出差人員職稱與姓名。`finance.json` 的 `agency.full_name` 要改成同一個全銜。
 
 ```json
 {
@@ -215,34 +216,18 @@ cp examples/02-sample-agency.trip-finance.json my-agency.trip-finance.json
 
 **步驟三：填 `per_diem_base`**
 
-每個 `segment` 的 `per_diem_base` 填當年度官方日支基準額（美元）。填值方式詳見下一節。
+`finance.json` 每個 `segment` 的 `per_diem_base` 填當年度官方日支基準額（美元）。填值方式詳見下一節。
 
-**步驟四：執行產生**
+**步驟四：驗證後產生**
 
-```python
-# 請在專案根目錄（tw-gov-overseas-trip-kit/）執行
-import json, pathlib
-from jsonschema import Draft202012Validator, FormatChecker
-from calc.per_diem import compute_trip_per_diem
-from render.render_html import render_html
-from render.render_docx import render_report_docx, render_review_table_docx
-from render.render_finance_xlsx import render_finance_xlsx
-
-trip = json.loads(pathlib.Path("my-agency.trip.json").read_text(encoding="utf-8"))
-fin  = json.loads(pathlib.Path("my-agency.trip-finance.json").read_text(encoding="utf-8"))
-
-# 驗證輸入：務必帶 FormatChecker，否則 schema 的 "format": "date" 不會被檢查，
-# 非法日期字串（如 2027-13-99）會被誤放（jsonschema 預設不啟用 format 檢查）。
-schema = json.loads(pathlib.Path("schema/trip.schema.json").read_text(encoding="utf-8"))
-Draft202012Validator(schema, format_checker=FormatChecker()).validate(trip)
-
-render_html(trip, "pre_trip.html")
-render_report_docx(trip, "report.docx")
-render_review_table_docx(trip, "review_table.docx")
-render_finance_xlsx(fin, "finance.xlsx")
+```bash
+python -m tripkit validate --trip data/my-agency/trip.json --finance data/my-agency/finance.json
+python -m tripkit render --trip data/my-agency/trip.json --finance data/my-agency/finance.json --outputs report review finance handbook --out output/my-agency
 ```
 
-產出後，`report.docx` 可由 `report_content` 帶入本文；未填部分在 Word 補齊，核閱後再轉 PDF 送核。
+`report.docx` 的本文由 `report_content` 帶入；本文尚未備妥時加 `--allow-incomplete-report`（摘要仍檢核），未填章節保留撰寫提示，在 Word 補齊、核閱後再轉 PDF 送核。
+
+要在自己的 Python 程式裡呼叫時，先用 `tripkit.validation` 的 `validate_trip`／`validate_finance`／`validate_pair` 驗證（要產報告時用 `validate_trip(trip, report=True)`，只要骨架才加 `allow_incomplete_report=True`；自行用 `jsonschema` 驗時要帶 `FormatChecker()`，否則日期格式不會被檢查），再呼叫〈輸出文件用途〉表中的函式；`render.*` 本身不做完整資料驗證。
 
 ---
 
@@ -276,7 +261,7 @@ Claude Code 會嘗試取得當年度數額，填入後請確認：
 1. **版本年度**：Claude 取得的是哪一版（生效日）？是否涵蓋出差日期？
 2. **核銷責任**：Claude 代填的數額供起草參考，使用者**自負核銷責任**，送核前需對照原始法規頁面再確認。
 
-若 WebFetch 取不到頁面，Claude Code 應回報取不到；若取得了但無法確認數額表版本年度涵蓋出差日期，應回報無法確認。兩種情況都請使用者改走方式 A，`per_diem_base` 先留空，不以記憶或推估的數字填入。
+任何 AI 工具代填時，取不到頁面就回報取不到；取得了但無法確認數額表版本年度涵蓋出差日期，就回報無法確認。兩種情況都請使用者改走方式 A，`per_diem_base` 先留空，不以記憶或推估的數字填入。
 
 ### 填值原則（R4/R5）
 

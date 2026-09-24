@@ -8,8 +8,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### 變更
+- SKILL.md〈啟動流程〉改用 `python -m tripkit init`／`validate`／`render`，取代手寫 Python 範例。舊範例只驗行程資料，沒驗經費資料與報告本文，且會覆寫同名檔。自行以 Python 呼叫時，產報告前改用 `validate_trip(trip, report=True)`。
+- SKILL.md 引導使用者提供出差素材，由固定台詞改為依本文缺漏章節列出對應素材。
+
 ### 修正
 - SKILL.md「取得方式 B」補一句：WebFetch 取不到主計總處數額表，或取得了但無法確認版本年度涵蓋出差日期時，分別照實回報，請使用者改走方式 A，`per_diem_base` 先留空，不以記憶或推估的數字填入（對應 Opus 5.5 System Card §6.2.2：任務做不到時模型傾向繞路交差）。
+- 上一條的回報規則改為適用任何 AI 工具，不再只點名 Claude Code／WebFetch（同一份 SKILL.md 也由 Codex、Gemini CLI、claude.ai 讀取）。
+- `docs/延返與個案指引.md` 艙等一段移除「本工具舊文」的自我指涉，改述「只有頭等與經濟即只能經濟」為修正前的說法（見解釋彙編逐案索引案號 5-4）。
 
 ## [1.6.1] — 2026-09-15
 
